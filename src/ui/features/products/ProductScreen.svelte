@@ -5,6 +5,13 @@
   import CreateProductForm from "./components/CreateProductForm.svelte";
   
   let showModal = $state(false);
+
+  let product = $state({
+    description: '',
+    unit: '',
+    price: +0,
+    stock: false
+  });
   
   let products = [
     {
@@ -29,6 +36,12 @@
 </script>
 
 <Title>Productos</Title>
+<div>
+  <p>{product.description}</p>
+  <p>{product.price}</p>
+  <p>{product.stock}</p>
+  <p>{product.unit}</p>
+</div>
 <div class="flex items-center gap-2 my-4">
   <div class="flex-1">Buscador...</div>
   <div>
@@ -44,5 +57,5 @@
 
 <Modal bind:showModal>
   <Title>Crear nuevo producto</Title>
-  <CreateProductForm/>
+  <CreateProductForm bind:product/>
 </Modal>

@@ -1,6 +1,6 @@
 
 <script>
-  let {title, idComponent = ''} = $props();
+  let {title, idComponent = '', value = $bindable()} = $props();
 
   if(idComponent == ''){
       idComponent = "id-" + title.toLowerCase();
@@ -9,5 +9,5 @@
 
 <div class="flex flex-col mt-4">
   <label class="font-bold pb-1" for={idComponent}>{title}</label>
-  <textarea class="p-2 border-2 border-bacalao-secondary border-solid rounded" id={idComponent}></textarea>
+  <textarea bind:value={value} class="p-2 border-2 border-bacalao-secondary border-solid rounded" id={idComponent}></textarea>
 </div>
