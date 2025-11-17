@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bacalao-secondary: #D5D6E1;
+  --color-bacalao-primary: #8B8EAD;
+}

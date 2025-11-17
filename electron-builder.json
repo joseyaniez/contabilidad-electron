@@ -1,0 +1,15 @@
+{
+  "appId": "com.joseito.electron-course",
+  "files": ["dist-electron", "dist-svelte"],
+  "icon": "./desktopIcon.png",
+  "mac": {
+    "target": "dmg"
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Utility"
+  },
+  "win": {
+    "target": ["portable", "msi"]
+  }
+}

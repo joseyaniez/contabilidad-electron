@@ -1,0 +1,39 @@
+{
+  "name": "ejemplo_electron",
+  "private": true,
+  "version": "0.0.0",
+  "main": "dist-electron/main",
+  "type": "module",
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:svelte dev:electron",
+    "dev:svelte": "vite",
+    "dev:electron": "npm run transpile:electron; cross-env NODE_ENV=development electron .",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
+    "transpile:electron": "tsc --project src/electron/tsconfig.json",
+    "dist:mac": "npm run transpile:electron && npm run build && electron-builder --mac --arm64",
+    "dist:win": "npm run transpile:electron && npm run build && electron-builder --win --x64",
+    "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "@tsconfig/svelte": "^5.0.5",
+    "@types/node": "^24.6.0",
+    "autoprefixer": "^10.4.21",
+    "cross-env": "^10.1.0",
+    "electron": "^39.1.0",
+    "electron-builder": "^26.0.12",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.5.6",
+    "svelte": "^5.39.6",
+    "svelte-check": "^4.3.2",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.17",
+    "svelte-spa-router": "^4.0.1",
+    "tailwindcss": "^4.1.17"
+  }
+}
