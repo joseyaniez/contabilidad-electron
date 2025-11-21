@@ -2,7 +2,7 @@
   "name": "ejemplo_electron",
   "private": true,
   "version": "0.0.0",
-  "main": "dist-electron/main",
+  "main": "dist-electron/electron/main",
   "type": "module",
   "scripts": {
     "dev": "npm-run-all --parallel dev:svelte dev:electron",
@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
+    "sqlite3": "^5.1.7",
     "svelte-spa-router": "^4.0.1",
     "tailwindcss": "^4.1.17"
   }

@@ -5,16 +5,24 @@
     import InputSelect from "../../../components/form/InputSelect.svelte";
     import InputTextArea from "../../../components/form/InputTextArea.svelte";
 
-    interface Props {
-      product: {
-        description: string,
-        unit: string,
-        price: number,
-        stock: boolean
-      }
-    }
+    let product = $state({
+      description: "",
+      unit: "unidad",
+      price: 0,
+      stock: false
+    });
 
-    let { product = $bindable() }: Props = $props();
+    function saveProduct(){
+      let cleanProduct = {
+        description: product.description,
+        unit: product.unit,
+        price: product.price,
+        stock: product.stock
+      }
+      window.electronAPI.products.create(cleanProduct).then((resp) => {
+        console.log(resp);
+      })
+    }
 
     const unidades = [
       { value: "kg", name: "Kg" },
@@ -37,5 +45,5 @@
     <InputNumber bind:value={product.price} title="Precio" step="0.50"/>
     <InputCheckbox title="Stock" bind:checked={product.stock} />
   </div>
-  <Button onclick={()=>{}}>Guardar</Button>
+  <Button onclick={saveProduct}>Guardar</Button>
 </form>
