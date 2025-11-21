@@ -6,6 +6,7 @@ function createProductsTable() {
     CREATE TABLE IF NOT EXISTS products (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       description TEXT NOT NULL,
+      unit TEXT NOT NULL,
       price REAL NOT NULL,
       stock INTEGER DEFAULT 0
     )
@@ -21,9 +22,9 @@ function createProductsTable() {
 }
 
 // HAZLO async envolviéndolo en Promise
-function saveProduct(description: string, price: number, stock: number): Promise<number> {
+function saveProduct(description: string, unit: string, price: number, stock: number): Promise<number> {
   const sql = `
-    INSERT INTO products (description, price, stock)
+    INSERT INTO products (description, unit, price, stock)
     VALUES (?, ?, ?)
   `;
 

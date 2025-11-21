@@ -3,7 +3,7 @@
     import InputSelect from "../../components/form/InputSelect.svelte";
     import ClientForm from "../../components/form/client/ClientForm.svelte";
     import ProductForm from "../../components/form/product/ProductForm.svelte";
-    import ProductsTable from "../../components/table/products/ProductsTable.svelte";
+    import Table from "../../components/table/Table.svelte";
 
     const today = new Date().toLocaleDateString();
 
@@ -11,6 +11,9 @@
       {value: "contado", name: "Al contado"},
       {value: "credito", name: "Al crédito"},
     ]
+
+    let selectedPagagementType = $state("");
+
 </script>
 
 <div class="lg:w-5/6 lg:m-auto">
@@ -20,6 +23,6 @@
   </div>
   <ClientForm/>
   <ProductForm/>
-  <ProductsTable/>
-  <InputSelect title="Tipo de pago" content={pagagementTypes}/>
+  <Table/>
+  <InputSelect title="Tipo de pago" content={pagagementTypes} bind:value={selectedPagagementType}/>
 </div>

@@ -3,5 +3,6 @@ export interface Product {
   description: string;
   price: number;
   stock: boolean
+  unit: string;
   // otros campos...
 }

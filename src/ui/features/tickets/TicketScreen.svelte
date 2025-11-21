@@ -2,7 +2,7 @@
     import Title from "../../components/Title.svelte";
     import ClientForm from "../../components/form/client/ClientForm.svelte";
     import ProductForm from "../../components/form/product/ProductForm.svelte";
-    import ProductsTable from "../../components/table/products/ProductsTable.svelte";
+    import Table from "../../components/table/Table.svelte";
     const today = new Date().toLocaleDateString();
 </script>
 
@@ -14,5 +14,5 @@
   </div>
   <ClientForm/>
   <ProductForm/>
-  <ProductsTable/>
+  <Table/>
 </div>

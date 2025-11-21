@@ -1,6 +1,6 @@
 <script lang="ts">
   import Modal from "../../components/Modal.svelte";
-  import ProductsTable from "../../components/table/products/ProductsTable.svelte";
+  import ProductsTable from "./components/ProductsTable.svelte";
   import Title from "../../components/Title.svelte";
   import CreateProductForm from "./components/CreateProductForm.svelte";
   
@@ -24,5 +24,5 @@
 
 <Modal bind:showModal>
   <Title>Crear nuevo producto</Title>
-  <CreateProductForm/>
+  <CreateProductForm addOnClick={() => showModal = false}/>
 </Modal>

@@ -6,9 +6,9 @@ export default function setupProductsIPC(){
   createProductsTable();
 
   ipcMain.handle("products:create", async (event, product) => {
-      const { description, price, stock } = product;
+      const { description, price, stock, unit } = product;
       try {
-          const id = await saveProduct(description, price, stock);
+          const id = await saveProduct(description, unit, price, stock);
           return { success: true, data: id };
       } catch (error) {
           if (error instanceof Error) {

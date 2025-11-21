@@ -25,6 +25,7 @@
         <th class="w-30" scope="col"></th>
         <th scope="col">Código</th>
         <th scope="col">Descripción</th>
+        <th scope="col">Unidad</th>
         <th scope="col">Precio</th>
         <th scope="col">Stock</th>
     </tr>
@@ -40,6 +41,7 @@
         </td>
         <td>{product.id}</td>
         <td>{product.description}</td>
+        <td>{product.unit}</td>
         <td>{product.price}</td>
         <td>
           {#if product.stock}
