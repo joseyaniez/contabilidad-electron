@@ -25,11 +25,11 @@ function createProductsTable() {
 function saveProduct(description: string, unit: string, price: number, stock: number): Promise<number> {
   const sql = `
     INSERT INTO products (description, unit, price, stock)
-    VALUES (?, ?, ?)
+    VALUES (?, ?, ?, ?)
   `;
 
   return new Promise((resolve, reject) => {
-    DB.run(sql, [description, price, stock], function (err) {
+    DB.run(sql, [description, unit, price, stock], function (err) {
       if (err) {
         reject(err);
         return;
@@ -55,4 +55,20 @@ function getAllProducts(): Promise<Array<Product>>{
   });
 }
 
-export { createProductsTable, saveProduct, getAllProducts };
+function deleteProduct(id: string): Promise<void> {
+  const sql = `
+    DELETE FROM products WHERE id = ?
+  `;
+
+  return new Promise((resolve, reject) => {
+    DB.run(sql, [id], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve();
+    });
+  });
+}
+
+export { createProductsTable, saveProduct, getAllProducts, deleteProduct };

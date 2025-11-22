@@ -9,6 +9,9 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     },
     getAll: async() => {
       return await electron.ipcRenderer.invoke("products:getAll");
+    },
+    delete: async(id: number) => {
+      return await electron.ipcRenderer.invoke("products:delete", id);
     }
   }
 });

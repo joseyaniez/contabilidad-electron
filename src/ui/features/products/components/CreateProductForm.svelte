@@ -4,7 +4,6 @@
     import InputNumber from "../../../components/form/InputNumber.svelte";
     import InputSelect from "../../../components/form/InputSelect.svelte";
     import InputTextArea from "../../../components/form/InputTextArea.svelte";
-    import ButtonAddProduct from "../../../components/form/product/components/ButtonAddProduct.svelte";
 
     let { addOnClick = () => {} } = $props();
 
@@ -24,11 +23,12 @@
       }
       window.electronAPI.products.create(cleanProduct).then((resp) => {
         console.log(resp);
+        addOnClick?.({...cleanProduct, id: resp.data!.toString()});
+        product = {description: "",unit: "unidad",price: 0,stock: false} // reset product
       }).catch((err) => {
         console.error(err);
+        product = {description: "",unit: "unidad",price: 0,stock: false} // reset product
       });
-      product = {description: "",unit: "unidad",price: 0,stock: false} // reset product
-      addOnClick();
     }
 
     const unidades = [
@@ -42,7 +42,7 @@
 </script>
 
 <form>
-  <InputTextArea title="Description" bind:value={product.description}/>
+  <InputTextArea title="Descripción" bind:value={product.description}/>
   <div class="mt-4 mb-1 py-2 flex flex-row gap-6 items-center">
     <InputSelect bind:value={product.unit} title="Unidad" content={unidades}/>
     <InputCheckbox title="Stock" bind:checked={product.stock} />
@@ -51,6 +51,6 @@
     <InputNumber bind:value={product.price} title="Precio" step="0.50"/>
   </div>
   <div class="flex justify-end mt-2">
-    <Button onclick={()=> {addOnClick()}}>Guardar</Button>
+    <Button onclick={ saveProduct }>Guardar</Button>
   </div>
 </form>

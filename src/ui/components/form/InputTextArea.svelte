@@ -9,5 +9,5 @@
 
 <div class="flex flex-col mt-4">
   <label class="font-bold pb-1" for={idComponent}>{title}</label>
-  <textarea bind:value={value} class="p-2 border-2 border-bacalao-secondary border-solid rounded" id={idComponent}></textarea>
+  <textarea bind:value={value} class="p-2 min-h-24 border-2 border-bacalao-secondary border-solid rounded" id={idComponent}></textarea>
 </div>

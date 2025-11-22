@@ -1,6 +1,6 @@
 
 import { ipcMain } from "electron";
-import { createProductsTable, saveProduct, getAllProducts } from "../db/models/products.js";
+import { createProductsTable, saveProduct, getAllProducts, deleteProduct } from "../db/models/products.js";
 
 export default function setupProductsIPC(){
   createProductsTable();
@@ -22,6 +22,18 @@ export default function setupProductsIPC(){
       try {
           const products = await getAllProducts();
           return { success: true, data: products };
+      } catch (error) {
+          if (error instanceof Error) {
+              return { success: false, error: error.message };
+          }
+          return { success: false, error: "Unknown error" };
+      }
+  });
+
+  ipcMain.handle("products:delete", async (event, id: string) => {
+      try {
+          await deleteProduct(id);
+          return { success: true };
       } catch (error) {
           if (error instanceof Error) {
               return { success: false, error: error.message };

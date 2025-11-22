@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+  import type { Product } from "../../../types/models/product";
   import Modal from "../../components/Modal.svelte";
   import ProductsTable from "./components/ProductsTable.svelte";
   import Title from "../../components/Title.svelte";
@@ -6,6 +8,24 @@
   
   let showModal = $state(false);
   
+  let products: Array<Product> = $state([]);
+
+  onMount(async () => {
+    try {
+      const resp = await window.electronAPI.products.getAll();
+      if(resp.success){
+        products = resp.data!;
+      }
+    } catch (error) {
+      console.log("Error fetching products:", error);
+    }
+  });
+
+  function addProduct(newProduct: Product) {
+    showModal = false;
+    products = [...products, newProduct];
+  }
+
 </script>
 
 <Title>Productos</Title>
@@ -20,9 +40,9 @@
     </button>
   </div>
 </div>
-<ProductsTable/>
+<ProductsTable bind:products/>
 
 <Modal bind:showModal>
   <Title>Crear nuevo producto</Title>
-  <CreateProductForm addOnClick={() => showModal = false}/>
+  <CreateProductForm addOnClick={addProduct}/>
 </Modal>

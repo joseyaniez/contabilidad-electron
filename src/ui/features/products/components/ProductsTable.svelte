@@ -1,21 +1,17 @@
 <script lang="ts">
-  import type { Product } from "../../../../types/models/product";
-  import { onMount } from "svelte";
+    import type { Product } from "../../../../types/models/product";
   import DeleteIcon from "../../../assets/icons/deleteIcon.svelte";
   import EditIcon from "../../../assets/icons/EditIcon.svelte";
 
-  let products: Array<Product> = [];
+  let { products = $bindable() }: {products: Array<Product>} = $props();
 
-  onMount(async () => {
-    try {
-      const resp = await window.electronAPI.products.getAll();
-      if(resp.success){
-        products = resp.data!;
-      }
-    } catch (error) {
-
-    }
-  });
+  function deleteProduct(id: string){
+    window.electronAPI.products.delete(id).then(() => {
+      products = products.filter(product => product.id !== id);
+    }).catch((err) => {
+      console.error(err);
+    });
+  }
 
 </script>
 
@@ -35,7 +31,7 @@
       <tr class="h-10 text-center">
         <td>
           <div>
-            <button><DeleteIcon/></button>
+            <button onclick={() => deleteProduct(product.id!)}><DeleteIcon/></button>
             <button><EditIcon/></button>
           </div>
         </td>
