@@ -7,6 +7,7 @@ function createClientsTable() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       dni TEXT,
       ruc TEXT,
+      address TEXT,
       name TEXT
     )
   `;
@@ -20,19 +21,19 @@ function createClientsTable() {
   });
 }
 
-function saveClient(dni: string, ruc: string, name: string): Promise<Client> {
+function saveClient(dni: string, ruc: string, address: string, name: string): Promise<Client> {
   const sql = `
-    INSERT INTO clients (dni, ruc, name)
-    VALUES (?, ?, ?)
+    INSERT INTO clients (dni, ruc, address, name)
+    VALUES (?, ?, ?, ?)
   `;
 
   return new Promise((resolve, reject) => {
-    DB.run(sql, [dni, ruc, name], function (err) {
+    DB.run(sql, [dni, ruc, address, name], function (err) {
       if (err) {
         reject(err);
         return;
       }
-      resolve({ id: this.lastID.toString(), dni, ruc, name });
+      resolve({ id: this.lastID.toString(), dni, ruc, address, name });
     });
   });
 }

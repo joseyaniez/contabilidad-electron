@@ -1,16 +1,35 @@
 <script lang="ts">
+  import type { Client } from "../../../../../types/models/client";
+  import { debounce } from "../../../../util/debounce";
+
+  const updateDebounced = debounce(updateProductsList, 300);
+
   let clientText = $state("");
+  let clientList = $state<Array<Client>>([]);
+
+  /*
+  $effect(() => {
+    if(clientText.length > 3){
+      updateDebounced();
+    } else {
+      clientList = [];
+    }
+  });*/
   
   function onKeyPress(event: KeyboardEvent) {
-    console.log("Key pressed:", event.key);
+    updateProductsList();
+  }
+
+  function updateProductsList() {
     window.electronAPI.clients.find(clientText, clientText, clientText)
-      .then((result: any) => {
+      .then((result) => {
         console.log("Search result:", result);
       })
-      .catch((error: any) => {
+      .catch((error) => {
         console.error("Error during client search:", error);
       });
   }
+
 </script>
 
 <div class="flex flex-col relative flex-1">

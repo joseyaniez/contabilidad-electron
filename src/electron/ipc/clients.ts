@@ -7,9 +7,9 @@ export default function setupClientsIPC(){
   dbClient.createClientsTable();
 
   ipcMain.handle("clients:create", async (event, client) => {
-    const { dni, ruc, name } = client;
+    const { dni, ruc, address, name } = client;
     try {
-      const id = await dbClient.saveClient(dni, ruc, name);
+      const id = await dbClient.saveClient(dni, ruc, address, name);
       return { success: true, data: client };
     } catch (error) {
       if (error instanceof Error) {

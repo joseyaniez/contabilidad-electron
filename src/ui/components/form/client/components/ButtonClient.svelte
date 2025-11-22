@@ -1,10 +1,39 @@
 <script>
+    import Button from "../../../Button.svelte";
     import Modal from "../../../Modal.svelte";
+    import Title from "../../../Title.svelte";
+    import InputText from "../../InputText.svelte";
 
     let showModal = $state(false);
 
+    let client = $state({
+      dni: "",
+      ruc: "",
+      name: "",
+      address: ""
+    });
+
     function onClick() {
       showModal = true;
+    }
+
+    function onSaveClient() {
+      const cleanClient = {
+        dni: client.dni,
+        ruc: client.ruc,
+        name: client.name,
+        address: client.address
+      };
+      window.electronAPI.clients.create(cleanClient)
+        .then((resp) => {
+          console.log("Client created:", resp);
+        })
+        .catch((err) => {
+          console.error("Error creating client:", err);
+        }).finally(() => {
+          client = { dni: "", ruc: "", name: "", address: "" }; // reset client
+          showModal = false;
+        });
     }
 
 </script>
@@ -18,22 +47,25 @@
 
 <Modal bind:showModal>
   <div class="p-4">
-    <form class="flex flex-col gap-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Nombre</label>
-        <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+    <Title>Nuevo Cliente</Title>
+    <div>
+      <div class="mb-4 mt-2">
+        <InputText title="DNI" bind:value={client.dni} />
       </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-        <input type="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+      <div class="mb-4">
+        <InputText title={`RUC ${client.ruc.length > 0 ? '(requiere dirección)': ''}`} bind:value={client.ruc} />
       </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Teléfono</label>
-        <input type="tel" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+      <div class="mb-4">
+        <InputText title="Nombre" bind:value={client.name} />
       </div>
-      <div class="flex justify-end">
-        <button type="submit" class="bg-bacalao-primary text-white px-4 py-2 rounded-full">Guardar Cliente</button>
+      {#if client.ruc.length > 0}
+        <div>
+          <InputText title="Dirección" bind:value={client.address} />
+        </div>
+      {/if}
+      <div class="flex justify-end mt-2">
+        <Button onclick={ onSaveClient }>Guardar</Button>
       </div>
-    </form>
+    </div>
   </div>
 </Modal>
