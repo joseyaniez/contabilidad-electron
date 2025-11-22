@@ -3,6 +3,7 @@ import path from 'path';
 import { isDev } from './util.js';
 import { getPreloadPath } from './pathResolver.js';
 import setupProductsIPC from './ipc/products.js';
+import setupClientsIPC from './ipc/clients.js';
 
 app.on("ready", () => {
   const mainwindow = new BrowserWindow({
@@ -17,4 +18,5 @@ app.on("ready", () => {
   }
 
   setupProductsIPC();
+  setupClientsIPC();
 });
