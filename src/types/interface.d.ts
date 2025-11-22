@@ -7,6 +7,7 @@ export interface IElectronAPI {
     create: (product: Product) => Promise<productResponse<number>>,
     getAll: () => Promise<productResponse<Array<Product>>>,
     delete: (id: string) => Promise<productResponse<void>>,
+    update: (product: Product) => Promise<productResponse<void>>,
   }
 }
 

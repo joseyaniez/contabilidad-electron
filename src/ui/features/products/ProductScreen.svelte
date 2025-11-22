@@ -7,6 +7,8 @@
   import CreateProductForm from "./components/CreateProductForm.svelte";
   
   let showModal = $state(false);
+  let isUpdate = $state(false);
+  let updateProductData: Product = $state({} as Product);
   
   let products: Array<Product> = $state([]);
 
@@ -23,7 +25,16 @@
 
   function addProduct(newProduct: Product) {
     showModal = false;
+    products = products.filter(p => p.id !== newProduct.id);
+    products.sort((a, b) => (a.id! > b.id! ? 1 : -1));
     products = [...products, newProduct];
+  }
+
+  function updateProducts(product: Product) {
+    showModal = true;
+    isUpdate = true;
+    updateProductData = product;
+    console.log("Update product:", product);
   }
 
 </script>
@@ -40,9 +51,9 @@
     </button>
   </div>
 </div>
-<ProductsTable bind:products/>
+<ProductsTable onUpdate={updateProducts} bind:products/>
 
 <Modal bind:showModal>
   <Title>Crear nuevo producto</Title>
-  <CreateProductForm addOnClick={addProduct}/>
+  <CreateProductForm addOnClick={addProduct} {isUpdate} updateProd={updateProductData}/>
 </Modal>

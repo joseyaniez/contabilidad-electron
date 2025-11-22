@@ -71,4 +71,22 @@ function deleteProduct(id: string): Promise<void> {
   });
 }
 
-export { createProductsTable, saveProduct, getAllProducts, deleteProduct };
+function updateProduct(id: string, description: string, unit: string, price: number, stock: number): Promise<void> {
+  const sql = `
+    UPDATE products
+    SET description = ?, unit = ?, price = ?, stock = ?
+    WHERE id = ?
+  `;
+
+  return new Promise((resolve, reject) => {
+    DB.run(sql, [description, unit, price, stock, id], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve();
+    });
+  });
+}
+
+export { createProductsTable, saveProduct, getAllProducts, deleteProduct, updateProduct };

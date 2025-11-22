@@ -1,9 +1,9 @@
 <script lang="ts">
-    import type { Product } from "../../../../types/models/product";
+  import type { Product } from "../../../../types/models/product";
   import DeleteIcon from "../../../assets/icons/deleteIcon.svelte";
   import EditIcon from "../../../assets/icons/EditIcon.svelte";
 
-  let { products = $bindable() }: {products: Array<Product>} = $props();
+  let { products = $bindable(), onUpdate }: {products: Array<Product>, onUpdate: (p: Product) => void} = $props();
 
   function deleteProduct(id: string){
     window.electronAPI.products.delete(id).then(() => {
@@ -32,7 +32,7 @@
         <td>
           <div>
             <button onclick={() => deleteProduct(product.id!)}><DeleteIcon/></button>
-            <button><EditIcon/></button>
+            <button onclick={() => onUpdate(product)}><EditIcon/></button>
           </div>
         </td>
         <td>{product.id}</td>

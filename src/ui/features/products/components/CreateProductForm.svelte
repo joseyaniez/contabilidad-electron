@@ -5,13 +5,31 @@
     import InputSelect from "../../../components/form/InputSelect.svelte";
     import InputTextArea from "../../../components/form/InputTextArea.svelte";
 
-    let { addOnClick = () => {} } = $props();
+    let { addOnClick = () => {}, isUpdate = false, updateProd = $bindable() } = $props();
 
     let product = $state({
       description: "",
       unit: "unidad",
       price: 0,
       stock: false
+    });
+
+    $effect(() => {
+      if(isUpdate){
+         product = {
+          description: updateProd.description,
+          unit: updateProd.unit,
+          price: updateProd.price,
+          stock: updateProd.stock
+        }
+      } else {
+        product = {
+          description: "",
+          unit: "unidad",
+          price: 0,
+          stock: false
+        }
+      }
     });
 
     function saveProduct(){
@@ -29,6 +47,34 @@
         console.error(err);
         product = {description: "",unit: "unidad",price: 0,stock: false} // reset product
       });
+    }
+
+    function updateProduct(){
+      let cleanProduct = {
+        id: updateProd.id,
+        description: product.description,
+        unit: product.unit,
+        price: product.price,
+        stock: product.stock
+      }
+      try {
+        window.electronAPI.products.update(cleanProduct).then((resp) => {
+          console.log(resp);
+          addOnClick?.(cleanProduct);
+        }).catch((err) => {
+          console.error(err);
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    function onClickSave(){
+      if(isUpdate){
+        updateProduct();
+      } else {
+        saveProduct();
+      }
     }
 
     const unidades = [
@@ -51,6 +97,6 @@
     <InputNumber bind:value={product.price} title="Precio" step="0.50"/>
   </div>
   <div class="flex justify-end mt-2">
-    <Button onclick={ saveProduct }>Guardar</Button>
+    <Button onclick={ onClickSave }>Guardar</Button>
   </div>
 </form>
