@@ -4,6 +4,7 @@
     import Title from "../../../Title.svelte";
     import InputText from "../../InputText.svelte";
 
+    let { clientSelected = $bindable() } = $props();
     let showModal = $state(false);
 
     let client = $state({
@@ -27,6 +28,7 @@
       window.electronAPI.clients.create(cleanClient)
         .then((resp) => {
           console.log("Client created:", resp);
+          clientSelected = resp.data;
         })
         .catch((err) => {
           console.error("Error creating client:", err);
@@ -39,7 +41,8 @@
 </script>
 
 <button
-  class="bg-bacalao-primary h-9 rounded-full py px-4 text-white"
+  class={`${clientSelected !== null ? 'bg-gray-300' : 'bg-bacalao-primary'} h-9 rounded-full py px-4 text-white`}
+  disabled={clientSelected !== null}
   onclick={onClick}
 >
   Nuevo Cliente
