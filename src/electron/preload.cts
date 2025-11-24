@@ -16,7 +16,10 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     },
     update: async(product: Product) => {
       return await electron.ipcRenderer.invoke("products:update", product);
-    }
+    },
+    find: async (searchTerm: string) => {
+      return await electron.ipcRenderer.invoke("products:find", searchTerm);
+    },
   },
   clients: {
     create: async (client: Client) => {

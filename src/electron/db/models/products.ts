@@ -55,6 +55,25 @@ function getAllProducts(): Promise<Array<Product>>{
   });
 }
 
+function findProducts(searchTerm: string): Promise<Array<Product>> {
+  const sql = `
+    SELECT * FROM products
+    WHERE UPPER(description) LIKE ?
+  `;
+
+  const textSearch = `%${searchTerm.toUpperCase()}%`;
+
+  return new Promise((resolve, reject) => {
+    DB.all<Product>(sql, [textSearch], (err, rows) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(rows);
+    });
+  });
+}
+
 function deleteProduct(id: string): Promise<void> {
   const sql = `
     DELETE FROM products WHERE id = ?
@@ -89,4 +108,4 @@ function updateProduct(id: string, description: string, unit: string, price: num
   });
 }
 
-export { createProductsTable, saveProduct, getAllProducts, deleteProduct, updateProduct };
+export { createProductsTable, saveProduct, getAllProducts, deleteProduct, updateProduct, findProducts };

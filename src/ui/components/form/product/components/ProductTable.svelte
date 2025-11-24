@@ -1,7 +1,12 @@
-<script>
+<script lang="ts">
+  import type { Product } from "../../../../../types/models/product";
   import ProductItem from "./ProductItem.svelte";
 
-  let { productsSelected = $bindable() } = $props();
+  interface Props {
+    productsSelected: Array<Product & { quantity: number }>;
+  }
+
+  let { productsSelected = $bindable() }: Props = $props();
 
 </script>
 
@@ -17,10 +22,9 @@
 
   <!-- Table Content -->
   <div class="flex flex-col">
-    <ProductItem/>
-    <ProductItem/>
-    <ProductItem/>
-    <ProductItem/>
+    {#each productsSelected as product}
+      <ProductItem {product}/>
+    {/each}
   </div>
 
   <!-- Table Totals -->

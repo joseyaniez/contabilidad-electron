@@ -14,5 +14,4 @@
   </div>
   <ClientForm/>
   <ProductForm/>
-  <Table/>
 </div>

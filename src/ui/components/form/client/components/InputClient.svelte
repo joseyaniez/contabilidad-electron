@@ -4,7 +4,7 @@
 
   let { clientSelected = $bindable() } = $props();
 
-  const updateDebounced = debounceAsync(updateProductsList, 600);
+  const updateDebounced = debounceAsync(updateClientsList, 600);
 
   let clientText = $state("");
   let clientList = $state<Array<Client>>([]);
@@ -24,7 +24,7 @@
     }
   })
   
-  async function updateProductsList(){
+  async function updateClientsList(){
     try {
       const result = await window.electronAPI.clients.find(clientText, clientText, clientText);
       const data = result.data || [];
@@ -64,7 +64,7 @@
   >
     X
   </button>
-  <div class={`absolute w-5/6 top-16 bg-white left-2 ${clientList.length > 0 && !isSelected ? 'block' : 'hidden'} shadow-lg rounded-xl z-10`}>
+  <div class={`absolute w-5/6 top-16 bg-white left-2 ${clientList.length > 0 && !isSelected ? 'block' : 'hidden'} shadow-lg rounded-xl z-30`}>
     <div class="p-2 border-x border-b rounded-b-xl border-bacalao-secondary flex flex-col">
       {#each clientList as client}
         <button onclick={() => {onClickProductListed(client)}} class="px-2 py-1 text-left rounded-md hover:bg-indigo-50">{client.ruc ? client.dni + client.ruc : client.dni} - {client.name}</button>

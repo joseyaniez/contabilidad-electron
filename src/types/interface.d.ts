@@ -9,6 +9,7 @@ export interface IElectronAPI {
     getAll: () => Promise<resourceResponse<Array<Product>>>,
     delete: (id: string) => Promise<resourceResponse<void>>,
     update: (product: Product) => Promise<resourceResponse<void>>,
+    find: (searchTerm: string) => Promise<resourceResponse<Array<Product>>>,
   },
   clients: {
     create: (client: Client) => Promise<resourceResponse<Client>>,
