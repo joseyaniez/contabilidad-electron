@@ -6,7 +6,7 @@
   import ProductTable from "./components/ProductTable.svelte";
 
   let productSelected = $state<Product | null>(null);
-  let productsSelected = $state<Array<Product & {quantity: number}>>([]);
+  let { productsSelected = $bindable() } : {productsSelected: Array<Product & {quantity: number}>} = $props();
   let quantityProduct = $state<number>(1);
 
   function onAddClick(){

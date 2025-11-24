@@ -3,7 +3,7 @@
   import ButtonClient from "./components/ButtonClient.svelte";
   import InputClient from "./components/InputClient.svelte";
 
-  let clientSelected = $state<Client | null >(null);
+  let {clientSelected = $bindable()}: {clientSelected: Client | null} = $props();
 
 </script>
 

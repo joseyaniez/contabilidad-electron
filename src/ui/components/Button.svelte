@@ -1,10 +1,10 @@
 
 <script>
-  let { typeColor = 'primary', onclick, children } = $props();
+  let { padding = 1, typeColor = 'primary', onclick, children } = $props();
 </script>
 
 <button
-  class="bg-bacalao-{typeColor} my-4 px-2 py-1 rounded text-white"
+  class="bg-bacalao-{typeColor} my-4 px-{padding*2} py-{padding} cursor-pointer rounded text-white"
   type="button"
   {onclick}
 >
