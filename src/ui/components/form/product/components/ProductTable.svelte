@@ -8,6 +8,10 @@
 
   let { productsSelected = $bindable() }: Props = $props();
 
+  function onClickDeleteProduct(index: number) {
+    productsSelected = productsSelected.filter((_, i) => i !== index);
+  }
+
 </script>
 
 <div class="my-4 w-full">
@@ -22,8 +26,8 @@
 
   <!-- Table Content -->
   <div class="flex flex-col">
-    {#each productsSelected as product}
-      <ProductItem {product}/>
+    {#each productsSelected as product, i (product.id)}
+      <ProductItem {product} onClickDelete={() => onClickDeleteProduct(i)}/>
     {/each}
   </div>
 

@@ -21,6 +21,8 @@
   $effect(() => {
     if(productSelected){
       productText = productSelected.id + " - " + productSelected.description;
+    } else {
+      productText = "";
     }
   });
 
