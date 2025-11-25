@@ -2,6 +2,8 @@ const electron = require('electron');
 
 import type { Product } from '../types/models/product';
 import type { Client } from '../types/models/client';
+import { TicketItem } from '../types/models/ticketItem';
+import { Ticket } from '../types/models/ticket';
 
 electron.contextBridge.exposeInMainWorld("electronAPI", {
   products: {
@@ -27,6 +29,11 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     },
     find: async (dni: string, ruc: string, name: string) => {
       return await electron.ipcRenderer.invoke("clients:find", dni, ruc, name);
+    }
+  },
+  tickets: {
+    create: async (ticket: Ticket, ticketItems: Array<TicketItem>) => {
+      return await electron.ipcRenderer.invoke("tickets:create", ticket, ticketItems);
     }
   }
 });

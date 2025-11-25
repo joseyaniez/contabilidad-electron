@@ -1,5 +1,7 @@
 import type { Product } from "./models/product"
 import type { Client } from "./models/client"
+import type { Ticket } from "./models/ticket";
+import type { TicketItem } from "./models/ticketItem";
 
 export type resourceResponse<T> = {success: boolean; error?: string; data?: T};
 
@@ -14,6 +16,9 @@ export interface IElectronAPI {
   clients: {
     create: (client: Client) => Promise<resourceResponse<Client>>,
     find: (dni: string, ruc: string, name: string) => Promise<resourceResponse<Array<Client>>>,
+  },
+  tickets: {
+    create: (ticket: Ticket, ticketItems: Array<TicketItem>) => Promise<number>,
   }
 }
 
