@@ -32,8 +32,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     }
   },
   tickets: {
-    create: async (ticket: Ticket, ticketItems: Array<TicketItem>) => {
-      return await electron.ipcRenderer.invoke("tickets:create", ticket, ticketItems);
+    create: async (ticket: Ticket) => {
+      return await electron.ipcRenderer.invoke("tickets:create", ticket);
     }
   }
 });

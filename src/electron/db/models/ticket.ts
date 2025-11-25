@@ -25,7 +25,9 @@ function createTicketTable(){
   });
 }
 
-function saveTicket(serie: string, number: number, date: Date, clientId: string, productsItem: Array<TicketItem>): Promise<number>{
+function saveTicket(serie: string, number: number, dateString: string, clientId: string, productsItem: Array<TicketItem>): Promise<number>{
+
+
   let sql = `
     INSERT INTO tickets(serie, number, date, client_id)
     VALUES (?,?,?,?)
@@ -37,7 +39,8 @@ function saveTicket(serie: string, number: number, date: Date, clientId: string,
       // 1. Iniciar transacción
       DB.run("BEGIN TRANSACTION");
 
-      DB.run(sql, [serie, number, date.toISOString(), clientId], function(err){
+      console.log(serie, number, dateString, clientId, productsItem);
+      DB.run(sql, [serie, number, dateString, clientId], function(err){
         if(err){
           DB.run("ROLLBACK");
           reject(err);
@@ -51,7 +54,7 @@ function saveTicket(serie: string, number: number, date: Date, clientId: string,
         `)
 
         productsItem.forEach((prod) => {
-          stmt.run(prod.description, prod.unit, prod.quantity, prod.unitPrice, prod.importPrice, prod.ticketId, (err: Error) => {
+          stmt.run(prod.description, prod.unit, prod.quantity, prod.unitPrice, prod.importPrice, ticketId, (err: Error) => {
             if(err){
               stmt.finalize();
               DB.run("ROLLBACK");

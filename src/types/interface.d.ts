@@ -18,7 +18,7 @@ export interface IElectronAPI {
     find: (dni: string, ruc: string, name: string) => Promise<resourceResponse<Array<Client>>>,
   },
   tickets: {
-    create: (ticket: Ticket, ticketItems: Array<TicketItem>) => Promise<number>,
+    create: (ticket: Ticket) => Promise<number>,
   }
 }
 

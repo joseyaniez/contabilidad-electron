@@ -10,7 +10,7 @@ export default function setupClientsIPC(){
     const { dni, ruc, address, name } = client;
     try {
       const id = await dbClient.saveClient(dni, ruc, address, name);
-      return { success: true, data: client };
+      return { success: true, data: {...client, id} };
     } catch (error) {
       if (error instanceof Error) {
         return { success: false, error: error.message };
