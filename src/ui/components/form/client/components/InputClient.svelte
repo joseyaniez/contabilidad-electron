@@ -21,6 +21,8 @@
   $effect(() => {
     if(clientSelected){
       clientText = clientSelected.ruc ? clientSelected.ruc + " - " + clientSelected.name : clientSelected.dni + " - " + clientSelected.name;
+    } else {
+      clientText = '';
     }
   })
   
