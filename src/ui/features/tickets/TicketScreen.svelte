@@ -59,8 +59,15 @@
         ticketStatus = PaymentStatus.Sending;
         await delay(3000);
         const idTicket = await window.electronAPI.tickets.create(ticket)
-        ticketStatus = PaymentStatus.Success;
         console.log("Se insertó con id " + idTicket);
+        ticketStatus = PaymentStatus.GeneratingPDF;
+        var {ok, data} = await window.electronAPI.pdf.generateTicket(true, "ejemplo.pdf");
+        if(ok){
+          console.log("Se generó el PDF en " + data);
+        } else {
+          console.log("No se pudo generar el pdf")
+        }
+        ticketStatus = PaymentStatus.Success;
       } catch(err){
         ticketStatus = PaymentStatus.Error;
         console.log(err);

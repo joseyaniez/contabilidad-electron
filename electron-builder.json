@@ -1,7 +1,13 @@
 {
   "appId": "com.joseito.electron-course",
-  "files": ["dist-electron", "dist-svelte"],
-  "extraResources": ["/dist-electron/preload.cjs"],
+  "files": ["dist-electron/electron", "dist-svelte"],
+  "extraResources": [
+    {
+      "from": "pdfs/tickets/",
+      "to": "pdfs/invoices/",
+      "filter": ["**/*"]
+    }
+  ]
   "icon": "./desktopIcon.png",
   "mac": {
     "target": "dmg"

@@ -10,6 +10,8 @@ export function obtainSendingText(paymentStatus: PaymentStatus): string {
       return 'Enviando el comprobante a SUNAT...'
     case PaymentStatus.Success:
       return 'Se envió el comprobante correctamente'
+    case PaymentStatus.GeneratingPDF:
+      return 'Generando PDF'
     case PaymentStatus.Error:
       return 'Ocurrió un error al enviar el comprobante'
   }
