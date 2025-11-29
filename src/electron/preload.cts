@@ -37,8 +37,11 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     }
   },
   pdf: {
-    generateTicket: async(isTicket: boolean, pdfName: string) => {
-      return await electron.ipcRenderer.invoke("pdf:createTicket", isTicket, pdfName);
+    generateTicket: async(isTicket: boolean, ticket: Ticket) => {
+      return await electron.ipcRenderer.invoke("pdf:createTicket", isTicket, ticket);
+    },
+    openPdf: async (pdfPath: string) => {
+      return await electron.ipcRenderer.invoke("pdf:open", pdfPath);
     }
   }
 });

@@ -20,6 +20,11 @@
 
     let ticketStatus = $state<PaymentStatus>(PaymentStatus.Blank);
     let showModal = $state(false);
+    let urlPdf= $state("");
+
+    async function onOpenPdf(){
+      window.electronAPI.pdf.openPdf(urlPdf);
+    }
 
     async function onSaveClick(){
       ticketStatus = PaymentStatus.Blank;
@@ -61,7 +66,8 @@
         const idTicket = await window.electronAPI.tickets.create(ticket)
         console.log("Se insertó con id " + idTicket);
         ticketStatus = PaymentStatus.GeneratingPDF;
-        var {ok, data} = await window.electronAPI.pdf.generateTicket(true, "ejemplo.pdf");
+        var {ok, data} = await window.electronAPI.pdf.generateTicket(true, ticket);
+        urlPdf = data;
         if(ok){
           console.log("Se generó el PDF en " + data);
         } else {
@@ -92,18 +98,23 @@
   </div>
 
   <Modal bind:showModal>
-    <div class="flex flex-col">
+    <div class="flex flex-col justify-center">
       <div class="flex flex-row justify-end">
         <button 
           class="font-bold cursor-pointer"
           onclick={() => {
           ticketStatus = PaymentStatus.Blank;
           showModal = false;
+          urlPdf = '';
         }}>
           X
         </button>
       </div>
       <p class="my-8 text-center font-bold text-bacalao-primary text-xl">{obtainSendingText(ticketStatus)}</p>
+      {#if urlPdf.length > 0}
+        <button onclick={onOpenPdf} class="my-4 cursor-pointer text-center bg-bacalao-primary text-white rounded text-lg">Abrir comprobante</button>
+        <p>{ urlPdf }</p>
+      {/if}
     </div>
   </Modal>
 

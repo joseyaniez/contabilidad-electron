@@ -4,12 +4,13 @@ import path from "path";
 import fs from 'fs'
 import PDFDocument from 'pdfkit'
 import { app } from "electron";
+import { Ticket } from "../../../types/models/ticket.js";
 
-export function generateTicketPDF(isTicket: boolean = true, pdfName: string){
+export function generateTicketPDF(isTicket: boolean = true, ticket: Ticket): Promise<string>{
   return new Promise((resolve, reject) => {
     try {
       const pdfFolderPath = isTicket ? getPDFTicketFolder() : getPDFInvoiceFolder();
-      const pdfPath = path.join(pdfFolderPath, pdfName);
+      const pdfPath = path.join(pdfFolderPath, ticket.serie.toUpperCase() + ".pdf");
 
       const doc = new PDFDocument({size: "A4" ,margin: 40});
       const writeString = fs.createWriteStream(pdfPath);
@@ -64,7 +65,7 @@ export function generateTicketPDF(isTicket: boolean = true, pdfName: string){
 
       doc.fontSize(9).font("Helvetica-Bold").text("R.U.C. N° 10769527058", rucBoxX, rucBoxY + 10, {width: rucBoxW, align: "center"});
       doc.fontSize(14).text("FACTURA ELECTRÓNICA", rucBoxX, rucBoxY + 34, {width: rucBoxW, align: "center"});
-      doc.fontSize(13).text("B001-203", rucBoxX + 8, rucBoxY + 80, {width: rucBoxW, align: "center"});
+      doc.fontSize(13).text(ticket.serie.toUpperCase(), rucBoxX + 8, rucBoxY + 80, {width: rucBoxW, align: "center"});
 
       // ---------- Datos del cliente / Info factura ----------
       const detailsTop = 150;
@@ -81,21 +82,21 @@ export function generateTicketPDF(isTicket: boolean = true, pdfName: string){
       doc
         .font("Helvetica")
         .fontSize(9)
-        .text("Nombre del cliente", detailsLeft + 70, detailsTop);
+        .text(ticket.client.name ?? "-", detailsLeft + 70, detailsTop);
 
       doc.font("Helvetica-Bold").fontSize(9).text("RUC:", detailsLeft, detailsTop + 14);
-      doc.font("Helvetica").fontSize(9).text("Ruc del cliente", detailsLeft + 70, detailsTop + 14);
+      doc.font("Helvetica").fontSize(9).text(ticket.client.ruc ?? "-", detailsLeft + 70, detailsTop + 14);
 
       doc.font("Helvetica-Bold").fontSize(9).text("DIRECCIÓN:", detailsLeft, detailsTop + 28);
-      doc.font("Helvetica").fontSize(9).text("Dirección del cliente", detailsLeft + 70, detailsTop + 28);
+      doc.font("Helvetica").fontSize(9).text(ticket.client.address ?? "-", detailsLeft + 70, detailsTop + 28);
 
       // Fecha y N° (right)
       const rightX = detailsLeft + colLeftW + 10;
       doc.font("Helvetica-Bold").fontSize(9).text("FECHA EMISIÓN:", rightX, detailsTop);
-      doc.font("Helvetica").fontSize(9).text("Fecha emisión", rightX + 90, detailsTop);
+      doc.font("Helvetica").fontSize(9).text(ticket.dateString, rightX + 90, detailsTop);
 
       doc.font("Helvetica-Bold").fontSize(9).text("N° FACTURA:", rightX, detailsTop + 14);
-      doc.font("Helvetica").fontSize(9).text("B001-203", rightX + 90, detailsTop + 14);
+      doc.font("Helvetica").fontSize(9).text(ticket.serie.toUpperCase(), rightX + 90, detailsTop + 14);
 
 
       // Tabla de productos
@@ -125,7 +126,7 @@ export function generateTicketPDF(isTicket: boolean = true, pdfName: string){
       doc.text("V. UNIT.", tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + 4, tableTop + 5, { width: colWidths.unit, align: "right" });
       doc.text("IMPORTE", tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + colWidths.unit + 4, tableTop + 5, { width: colWidths.amount, align: "right" });
 
-      let elements = [1,2,3,4,5,6,7,8,9,10, 11, 12, 13];
+      let elements = ticket.productsList;
 
       // Draw rows
       let y = tableTop + 25;
@@ -134,12 +135,12 @@ export function generateTicketPDF(isTicket: boolean = true, pdfName: string){
         // row background optional (alternate)
         // doc.rect(tableLeft, y - 2, contentWidth, 20).fill(itemIndex % 2 ? "#fff" : "#fcfcfc").fillColor("black");
 
-        doc.text(item.toString(), tableLeft + 4, y, { width: colWidths.code, align: "left" });
-        doc.text("Producto nuevo prod " + item, tableLeft + colWidths.code + 4, y, { width: colWidths.desc, align: "left"});
-        doc.text("5", tableLeft + colWidths.code + colWidths.desc + 4, y, { width: colWidths.qty, align: "center" });
-        doc.text("Kg", tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + 4, y, { width: colWidths.qty, align: "center" });
-        doc.text("3.50", tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + 4, y, { width: colWidths.unit, align: "right" });
-        doc.text("17.50", tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + colWidths.unit + 4, y, { width: colWidths.amount, align: "right" });
+        doc.text(item.id ?? "-", tableLeft + 4, y, { width: colWidths.code, align: "left" });
+        doc.text(item.description + item, tableLeft + colWidths.code + 4, y, { width: colWidths.desc, align: "left"});
+        doc.text(item.quantity.toString(), tableLeft + colWidths.code + colWidths.desc + 4, y, { width: colWidths.qty, align: "center" });
+        doc.text(item.unit, tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + 4, y, { width: colWidths.qty, align: "center" });
+        doc.text(item.unitPrice.toString(), tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + 4, y, { width: colWidths.unit, align: "right" });
+        doc.text(item.importPrice.toString(), tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + colWidths.unit + 4, y, { width: colWidths.amount, align: "right" });
 
         y += 18;
         // draw line under row
@@ -175,7 +176,7 @@ export function generateTicketPDF(isTicket: boolean = true, pdfName: string){
       doc.font("Helvetica").fontSize(9).text("S/ " + "6.00", totalsX + 120, totalsBoxY + totalsLineHeight, { align: "right" });
 
       doc.font("Helvetica-Bold").fontSize(11).text("IMPORTE TOTAL:", totalsX - 50, totalsBoxY + totalsLineHeight * 2, { width: totalsWidth - 20, align: "right" });
-      doc.font("Helvetica-Bold").fontSize(11).text("S/ " + "46.50", totalsX + 120, totalsBoxY + totalsLineHeight * 2, { align: "right" });
+      doc.font("Helvetica-Bold").fontSize(11).text("S/ " + elements.reduce((ac, e) => ac + e.unitPrice, 0), totalsX + 120, totalsBoxY + totalsLineHeight * 2, { align: "right" });
 
       // SON: texto con monto en letras (simple)
       doc.fontSize(9).font("Helvetica").text("SON: " + "CUARENTA Y SEIS CON CINCUENTA CÉNTIMOS", margin, totalsBoxY + qrSize + 10);
@@ -189,6 +190,7 @@ export function generateTicketPDF(isTicket: boolean = true, pdfName: string){
 
       doc.end();
 
+      console.log(pdfPath)
       resolve(pdfPath);
 
     } catch(err){
