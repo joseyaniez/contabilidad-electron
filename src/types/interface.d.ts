@@ -19,10 +19,11 @@ export interface IElectronAPI {
   },
   tickets: {
     create: (ticket: Ticket) => Promise<number>,
+    get: (serie: string) => Promise<Ticket>,
   },
   pdf: {
     generateTicket: (isTicket: boolean, ticket: Ticket) => Promise<{ok: boolean, data: string}>
-    openPdf: (pdfPath: string) => Promise<{ok: boolean, data: string}>;
+    openPdf: (pdfPath: string) => Promise<{ok: boolean, data: string}>
   }
 }
 

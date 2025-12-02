@@ -44,8 +44,6 @@ function findClients(dni: string, ruc: string, name: string): Promise<Array<Clie
     return Promise.resolve([]);
   }
 
-  console.log(`Searching clients with dni: ${dni}, ruc: ${ruc}, name: ${name}`);
-
   const dniSearch = `%${dni.toUpperCase()}%`;
   const rucSearch = `%${ruc.toUpperCase()}%`;
   const nameSearch = `%${name.toUpperCase()}%`;
@@ -63,7 +61,6 @@ function findClients(dni: string, ruc: string, name: string): Promise<Array<Clie
         reject(err);
         return;
       }
-      console.log(`Found ${rows.length} clients`);
       resolve(rows);
     });
   });

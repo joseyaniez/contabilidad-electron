@@ -19,4 +19,16 @@ export default function setupTicketsIPC(){
     }
   })
 
+  ipcMain.handle("tickets:get", async (event, serie: string) => {
+    try {
+      const ticket = await dbTicket.getCompleteTicket(serie);
+      return { success: true, data: ticket }
+    } catch(err){
+      if(err instanceof Error){
+          return { success: false, error: err.message };
+      }
+      return { success: false, error: "Unknown error" };
+    }
+  })
+
 }

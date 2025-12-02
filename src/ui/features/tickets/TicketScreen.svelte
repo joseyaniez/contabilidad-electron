@@ -35,7 +35,7 @@
       const day = new Date().toISOString();
       const client = { ...clientSelected! };
       const ticket:Ticket = {
-        serie: "jdlsjf",
+        serie: "hello5",
         number: 3,
         dateString: day,
         client: {
@@ -53,7 +53,7 @@
             quantity: p.quantity,
             unitPrice: p.price,
             importPrice: impPrice,
-            ticketId: "jdlsjf"
+            ticketId: "hello5"
           }
         })
       }
@@ -64,9 +64,9 @@
         ticketStatus = PaymentStatus.Sending;
         await delay(3000);
         const idTicket = await window.electronAPI.tickets.create(ticket)
-        console.log("Se insertó con id " + idTicket);
         ticketStatus = PaymentStatus.GeneratingPDF;
-        var {ok, data} = await window.electronAPI.pdf.generateTicket(true, ticket);
+        const newTicket = await window.electronAPI.tickets.get("hello5");
+        var {ok, data} = await window.electronAPI.pdf.generateTicket(true, { ...newTicket, dateString: new Date().toLocaleString()});
         urlPdf = data;
         if(ok){
           console.log("Se generó el PDF en " + data);
@@ -113,7 +113,6 @@
       <p class="my-8 text-center font-bold text-bacalao-primary text-xl">{obtainSendingText(ticketStatus)}</p>
       {#if urlPdf.length > 0}
         <button onclick={onOpenPdf} class="my-4 cursor-pointer text-center bg-bacalao-primary text-white rounded text-lg">Abrir comprobante</button>
-        <p>{ urlPdf }</p>
       {/if}
     </div>
   </Modal>

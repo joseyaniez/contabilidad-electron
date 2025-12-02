@@ -1,4 +1,6 @@
 
+import { Client } from "../../../types/models/client.js";
+import { Ticket } from "../../../types/models/ticket.js";
 import { TicketItem } from "../../../types/models/ticketItem.js";
 import { DB } from "../connection.js";
 
@@ -25,9 +27,59 @@ function createTicketTable(){
   });
 }
 
+function getCompleteTicket(serie: string): Promise<Ticket> {
+  let query = "SELECT * FROM tickets WHERE serie = ?";
+  return new Promise((resolve, reject) => {
+    DB.get<{id: string, serie: string, number: number, date: string, client_id: number}>(query, [serie], (err, row) => {
+      if(err) {
+        reject(err);
+        return
+      }
+
+      let items: Array<TicketItem> = [];
+      let queryTicketItems = "SELECT * FROM ticket_items WHERE ticket_id = ?";
+      DB.all<{id: string, description: string, unit: string, quantity: number, unit_price: number, import_price:number, ticket_id: string}>(queryTicketItems, [row.id], (err, rows) => {
+        if(err){
+          reject(err);
+          return
+        }
+        rows.forEach((r) => {
+          items.push({
+            id: r.id, 
+            description: r.description, 
+            unit: r.unit, 
+            quantity: r.quantity, 
+            unitPrice: r.unit_price,
+            importPrice: r.import_price,
+            ticketId: r.ticket_id
+          })
+        })
+        let queryClient = "SELECT * FROM clients WHERE id = ?";
+        let client: Client | null;
+        DB.get<Client>(queryClient, [row.client_id], (err, rowClient) => {
+          if(err){
+            reject(err);
+            return
+          }
+          client = rowClient;
+
+
+          let result = {
+            id: row.id,
+            serie: row.serie,
+            number: row.number,
+            dateString: row.date,
+            client: client,
+            productsList: items
+          }
+          resolve(result);
+        })
+      })
+    })
+  })
+}
+
 function saveTicket(serie: string, number: number, dateString: string, clientId: string, productsItem: Array<TicketItem>): Promise<number>{
-
-
   let sql = `
     INSERT INTO tickets(serie, number, date, client_id)
     VALUES (?,?,?,?)
@@ -39,7 +91,6 @@ function saveTicket(serie: string, number: number, dateString: string, clientId:
       // 1. Iniciar transacción
       DB.run("BEGIN TRANSACTION");
 
-      console.log(serie, number, dateString, clientId, productsItem);
       DB.run(sql, [serie, number, dateString, clientId], function(err){
         if(err){
           DB.run("ROLLBACK");
@@ -85,4 +136,4 @@ function saveTicket(serie: string, number: number, dateString: string, clientId:
   });
 }
 
-export default {createTicketTable, saveTicket}
+export default {createTicketTable, saveTicket, getCompleteTicket}

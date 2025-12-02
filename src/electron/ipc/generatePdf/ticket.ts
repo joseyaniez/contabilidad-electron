@@ -22,6 +22,7 @@ export function generateTicketPDF(isTicket: boolean = true, ticket: Ticket): Pro
 
       // ---- Logo de la empresa
       const logoPath = path.join(app.getAppPath(), "public/logo.png")
+      const qrPath = path.join(app.getAppPath(), "public/qrexample.png")
       const logoWidth = 100;
       try {
         if(fs.existsSync(logoPath)){
@@ -132,15 +133,12 @@ export function generateTicketPDF(isTicket: boolean = true, ticket: Ticket): Pro
       let y = tableTop + 25;
       doc.font("Helvetica").fontSize(9);
       for (const item of elements) {
-        // row background optional (alternate)
-        // doc.rect(tableLeft, y - 2, contentWidth, 20).fill(itemIndex % 2 ? "#fff" : "#fcfcfc").fillColor("black");
-
         doc.text(item.id ?? "-", tableLeft + 4, y, { width: colWidths.code, align: "left" });
-        doc.text(item.description + item, tableLeft + colWidths.code + 4, y, { width: colWidths.desc, align: "left"});
-        doc.text(item.quantity.toString(), tableLeft + colWidths.code + colWidths.desc + 4, y, { width: colWidths.qty, align: "center" });
+        doc.text(item.description, tableLeft + colWidths.code + 4, y, { width: colWidths.desc, align: "left"});
+        doc.text(item.quantity?.toString(), tableLeft + colWidths.code + colWidths.desc + 4, y, { width: colWidths.qty, align: "center" });
         doc.text(item.unit, tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + 4, y, { width: colWidths.qty, align: "center" });
-        doc.text(item.unitPrice.toString(), tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + 4, y, { width: colWidths.unit, align: "right" });
-        doc.text(item.importPrice.toString(), tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + colWidths.unit + 4, y, { width: colWidths.amount, align: "right" });
+        doc.text(item.unitPrice?.toString(), tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + 4, y, { width: colWidths.unit, align: "right" });
+        doc.text(item.importPrice?.toString(), tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + colWidths.unit + 4, y, { width: colWidths.amount, align: "right" });
 
         y += 18;
         // draw line under row
@@ -153,9 +151,10 @@ export function generateTicketPDF(isTicket: boolean = true, ticket: Ticket): Pro
       const qrX = tableLeft;
       const qrY = y + 10;
       const qrSize = 70;
-      if(fs.existsSync(logoPath)){
+
+      if(fs.existsSync(qrPath)){
         try {
-          doc.image(logoPath, qrX, qrY, { width: qrSize, height: qrSize });
+          doc.image(qrPath, qrX, qrY, { width: qrSize, height: qrSize });
         } catch (err) { /* ignore */ }
       } else {
         // small placeholder
@@ -190,7 +189,6 @@ export function generateTicketPDF(isTicket: boolean = true, ticket: Ticket): Pro
 
       doc.end();
 
-      console.log(pdfPath)
       resolve(pdfPath);
 
     } catch(err){
