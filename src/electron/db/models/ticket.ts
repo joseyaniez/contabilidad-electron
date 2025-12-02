@@ -27,10 +27,28 @@ function createTicketTable(){
   });
 }
 
-function getCompleteTicket(serie: string): Promise<Ticket> {
-  let query = "SELECT * FROM tickets WHERE serie = ?";
+function getTicketNumber(serie: string): Promise<number> {
+  let query = "SELECT serie, max(number) num FROM tickets WHERE serie = ? GROUP BY serie"
   return new Promise((resolve, reject) => {
-    DB.get<{id: string, serie: string, number: number, date: string, client_id: number}>(query, [serie], (err, row) => {
+    DB.get<{serie: string, num: number}>(query, [serie], (err, row) => {
+      if(err){
+        reject(err);
+        return
+      }
+      if(row == undefined){
+        resolve(1);
+        return
+      }
+      const number = row.num;
+      resolve(number+1)
+    })
+  })
+}
+
+function getCompleteTicket(serie: string, ticketNumber: string): Promise<Ticket> {
+  let query = "SELECT * FROM tickets WHERE serie = ? AND number = ?";
+  return new Promise((resolve, reject) => {
+    DB.get<{id: string, serie: string, number: number, date: string, client_id: number}>(query, [serie, ticketNumber], (err, row) => {
       if(err) {
         reject(err);
         return
@@ -136,4 +154,4 @@ function saveTicket(serie: string, number: number, dateString: string, clientId:
   });
 }
 
-export default {createTicketTable, saveTicket, getCompleteTicket}
+export default {createTicketTable, saveTicket, getCompleteTicket, getTicketNumber}

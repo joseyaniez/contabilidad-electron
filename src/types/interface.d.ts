@@ -19,7 +19,8 @@ export interface IElectronAPI {
   },
   tickets: {
     create: (ticket: Ticket) => Promise<number>,
-    get: (serie: string) => Promise<Ticket>,
+    get: (serie: string, numberTicket: string) => Promise<Ticket>,
+    getNumber: (serie: string) => Promise<resourceResponse<number>>,
   },
   pdf: {
     generateTicket: (isTicket: boolean, ticket: Ticket) => Promise<{ok: boolean, data: string}>

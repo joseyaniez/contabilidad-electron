@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import type { Client } from "../../../types/models/client";
     import type { Product } from "../../../types/models/product";
     import type { Ticket } from "../../../types/models/ticket";
@@ -12,6 +13,7 @@
     import { PaymentStatus } from "../../util/paymentStatus";
     import { obtainSendingText } from "../../util/sendingMessage";
     const today = new Date().toLocaleDateString();
+    const actualSerieTicket = "B001";
 
     let clientSelected = $state<Client | null>(null);
     let productsSelected = $state<Array<Product & {quantity: number}>>([]);
@@ -21,6 +23,19 @@
     let ticketStatus = $state<PaymentStatus>(PaymentStatus.Blank);
     let showModal = $state(false);
     let urlPdf= $state("");
+    let ticketNumber = $state(0);
+    let ticketSerie = $derived(actualSerieTicket + "-" + ticketNumber.toString().padStart(4, "0"))
+
+    onMount(() => {
+      getTicketNumber();
+    })
+
+    async function getTicketNumber(){
+      const {success, data} = await window.electronAPI.tickets.getNumber(actualSerieTicket);
+      if(success){
+        ticketNumber = data!;
+      }
+    }
 
     async function onOpenPdf(){
       window.electronAPI.pdf.openPdf(urlPdf);
@@ -35,8 +50,8 @@
       const day = new Date().toISOString();
       const client = { ...clientSelected! };
       const ticket:Ticket = {
-        serie: "hello5",
-        number: 3,
+        serie: actualSerieTicket,
+        number: ticketNumber,
         dateString: day,
         client: {
           id: client.id,
@@ -53,7 +68,7 @@
             quantity: p.quantity,
             unitPrice: p.price,
             importPrice: impPrice,
-            ticketId: "hello5"
+            ticketId: "-"
           }
         })
       }
@@ -65,8 +80,9 @@
         await delay(3000);
         const idTicket = await window.electronAPI.tickets.create(ticket)
         ticketStatus = PaymentStatus.GeneratingPDF;
-        const newTicket = await window.electronAPI.tickets.get("hello5");
+        const newTicket = await window.electronAPI.tickets.get(actualSerieTicket, ticketNumber.toString());
         var {ok, data} = await window.electronAPI.pdf.generateTicket(true, { ...newTicket, dateString: new Date().toLocaleString()});
+        ticketNumber+=1;
         urlPdf = data;
         if(ok){
           console.log("Se generó el PDF en " + data);
@@ -87,7 +103,14 @@
 
 <div class="lg:w-5/6 lg:m-auto relative h-full">
   <div class="flex flex-row items-center justify-between mb-4">
-    <Title>Boletas</Title>
+    <Title>
+      <div class="flex flex-row gap-2">
+        <p>Boleta </p>
+        {#if ticketNumber > 0}
+          <p class="text-md">{ticketSerie}</p>
+        {/if}
+      </div>
+    </Title>
     <div class="text-bacalao-primary font-bold text-xl">{today}</div>
   </div>
   <ClientForm bind:clientSelected/>

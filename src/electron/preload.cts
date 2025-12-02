@@ -35,13 +35,16 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     create: async (ticket: Ticket) => {
       return await electron.ipcRenderer.invoke("tickets:create", ticket);
     },
-    get: async (serie: string) => {
-      let { success, data } = await electron.ipcRenderer.invoke("tickets:get", serie);
+    get: async (serie: string, ticketNumber: string) => {
+      let { success, data } = await electron.ipcRenderer.invoke("tickets:get", serie, ticketNumber);
       if(success){
         return data;
       } else {
         return ''
       }
+    },
+    getNumber: async(serie: string) => {
+      return await electron.ipcRenderer.invoke("tickets:getNumber", serie);
     }
   },
   pdf: {

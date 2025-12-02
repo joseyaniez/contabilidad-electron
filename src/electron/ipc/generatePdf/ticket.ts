@@ -10,7 +10,7 @@ export function generateTicketPDF(isTicket: boolean = true, ticket: Ticket): Pro
   return new Promise((resolve, reject) => {
     try {
       const pdfFolderPath = isTicket ? getPDFTicketFolder() : getPDFInvoiceFolder();
-      const pdfPath = path.join(pdfFolderPath, ticket.serie.toUpperCase() + ".pdf");
+      const pdfPath = path.join(pdfFolderPath, ticket.serie.toUpperCase() + "-" + ticket.number.toString().padStart(4, "0") + ".pdf");
 
       const doc = new PDFDocument({size: "A4" ,margin: 40});
       const writeString = fs.createWriteStream(pdfPath);
