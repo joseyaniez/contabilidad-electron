@@ -25,6 +25,6 @@ dist-electron
 *.sln
 *.sw?
 
-./pdfs/*
+pdfs/*
 
 .mydata.db
