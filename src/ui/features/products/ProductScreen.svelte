@@ -39,21 +39,23 @@
 
 </script>
 
-<Title>Productos</Title>
-<div class="flex items-center gap-2 my-4">
-  <div class="flex-1">Buscador...</div>
-  <div>
-    <button 
-      class="bg-bacalao-primary rounded-md px-2 py-1 text-white"
-      onclick={() => showModal = true}
-    >
-      Nuevo producto
-    </button>
+<div class="lg:w-5/6 lg:m-auto relative h-full">
+  <Title>Productos</Title>
+  <div class="flex items-center gap-2 my-4">
+    <div class="flex-1">Buscador...</div>
+    <div>
+      <button 
+        class="bg-bacalao-primary rounded-md px-2 py-1 text-white"
+        onclick={() => showModal = true}
+      >
+        Nuevo producto
+      </button>
+    </div>
   </div>
-</div>
-<ProductsTable onUpdate={updateProducts} bind:products/>
+  <ProductsTable onUpdate={updateProducts} bind:products/>
 
-<Modal bind:showModal>
-  <Title>Crear nuevo producto</Title>
-  <CreateProductForm addOnClick={addProduct} {isUpdate} updateProd={updateProductData}/>
-</Modal>
+  <Modal bind:showModal>
+    <Title>Crear nuevo producto</Title>
+    <CreateProductForm addOnClick={addProduct} {isUpdate} updateProd={updateProductData}/>
+  </Modal>
+</div>
