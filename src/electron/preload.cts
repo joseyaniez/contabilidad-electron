@@ -2,7 +2,7 @@ const electron = require('electron');
 
 import type { Product } from '../types/models/product';
 import type { Client } from '../types/models/client';
-import { TicketItem } from '../types/models/ticketItem';
+import { Invoice } from '../types/models/invoice';
 import { Ticket } from '../types/models/ticket';
 
 electron.contextBridge.exposeInMainWorld("electronAPI", {
@@ -45,6 +45,19 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     },
     getNumber: async(serie: string) => {
       return await electron.ipcRenderer.invoke("tickets:getNumber", serie);
+    }
+  },
+  invoices: {
+    create: async (invoice: Invoice) => {
+      return await electron.ipcRenderer.invoke("invoices:create", invoice);
+    },
+    get: async (serie: string, invoiceNumber: string) => {
+      let { success, data } = await electron.ipcRenderer.invoke("invoices:get", serie, invoiceNumber);
+      if(success){
+        return data;
+      } else {
+        return ''
+      }
     }
   },
   pdf: {

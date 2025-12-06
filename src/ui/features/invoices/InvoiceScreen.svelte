@@ -1,30 +1,109 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import type { Client } from "../../../types/models/client";
     import type { Product } from "../../../types/models/product";
+    import type { Invoice } from "../../../types/models/invoice";
     import Modal from "../../components/Modal.svelte";
     import Title from "../../components/Title.svelte";
-    import InputSelect from "../../components/form/InputSelect.svelte";
+    import Button from "../../components/Button.svelte";
     import ClientForm from "../../components/form/client/ClientForm.svelte";
     import ProductForm from "../../components/form/product/ProductForm.svelte";
-    import Table from "../../components/table/Table.svelte";
     import { multiplyPrice, sumPrices } from "../../util/cents";
+    import { delay } from "../../util/delay";
+    import { obtainSendingText } from "../../util/sendingMessage";
+    import { PaymentStatus } from "../../util/paymentStatus";
 
     const today = new Date().toLocaleDateString();
-    const actualSerieInvoice = "B001";
+    const actualSerieInvoice = "F001";
 
     let clientSelected = $state<Client | null>(null);
     let productsSelected = $state<Array<Product & {quantity: number}>>([]);
     let total = $derived(sumPrices(...productsSelected.map(p => multiplyPrice(p.quantity, p.price))))
+    let isActiveButton = $derived(!clientSelected !== null && productsSelected.length != 0);
 
+    let invoiceStatus = $state<PaymentStatus>(PaymentStatus.Blank);
+    let showModal = $state(false);
     let invoiceNumber = $state(0);
-    let invoiceSerie = $derived(actualSerieInvoice + "-" + ticketNumber.toString().padStart(4, "0"))
+    let urlPdf= $state("");
+    let invoiceSerie = $derived(actualSerieInvoice + "-" + invoiceNumber.toString().padStart(4, "0"))
 
     const pagagementTypes = [
       {value: "contado", name: "Al contado"},
       {value: "credito", name: "Al crédito"},
     ]
 
-    let selectedPagagementType = $state("");
+    onMount(() => {
+      getInvoiceNumber();
+    })
+
+    async function getInvoiceNumber(){
+      const {success, data} = await window.electronAPI.invoices.getNumber(actualSerieInvoice);
+      if(success){
+        invoiceNumber = data!;
+      }
+    }
+
+
+    async function onOpenPdf(){
+      window.electronAPI.pdf.openPdf(urlPdf);
+    }
+
+    async function onSaveClick(){
+      invoiceStatus = PaymentStatus.Blank;
+      if(!isActiveButton){
+        console.log("No es activo")
+        return;
+      }
+      const day = new Date().toISOString();
+      const client = { ...clientSelected! };
+      const invoice:Invoice = {
+        serie: actualSerieInvoice,
+        number: invoiceNumber,
+        dateString: day,
+        client: {
+          id: client.id,
+          dni: client.dni,
+          ruc: client.ruc,
+          address: client.address,
+          name: client.name
+        },
+        productsList: productsSelected.map(p => {
+          const impPrice = multiplyPrice(p.price, p.quantity)
+          return {
+            description: p.description,
+            unit: p.unit,
+            quantity: p.quantity,
+            unitPrice: p.price,
+            importPrice: impPrice,
+            ticketId: "-"
+          }
+        })
+      }
+      try {
+        showModal = true;
+        invoiceStatus = PaymentStatus.Validation;
+        await delay(1500);
+        invoiceStatus = PaymentStatus.Sending;
+        await delay(3000);
+        const idTicket = await window.electronAPI.invoices.create(invoice)
+        invoiceStatus = PaymentStatus.GeneratingPDF;
+        const newTicket = await window.electronAPI.tickets.get(actualSerieInvoice, invoiceNumber.toString());
+        var {ok, data} = await window.electronAPI.pdf.generateTicket(true, { ...newTicket, dateString: new Date().toLocaleString()});
+        invoiceNumber+=1;
+        urlPdf = data;
+        if(ok){
+          console.log("Se generó el PDF en " + data);
+        } else {
+          console.log("No se pudo generar el pdf")
+        }
+        invoiceStatus = PaymentStatus.Success;
+      } catch(err){
+        invoiceStatus = PaymentStatus.Error;
+        console.log(err);
+      }
+      clientSelected = null;
+      productsSelected = [];
+    }
 
 </script>
 
@@ -54,14 +133,14 @@
         <button 
           class="font-bold cursor-pointer"
           onclick={() => {
-          ticketStatus = PaymentStatus.Blank;
+          invoiceStatus = PaymentStatus.Blank;
           showModal = false;
           urlPdf = '';
         }}>
           X
         </button>
       </div>
-      <p class="my-8 text-center font-bold text-bacalao-primary text-xl">{obtainSendingText(ticketStatus)}</p>
+      <p class="my-8 text-center font-bold text-bacalao-primary text-xl">{obtainSendingText(invoiceStatus)}</p>
       {#if urlPdf.length > 0}
         <button onclick={onOpenPdf} class="my-4 cursor-pointer text-center bg-bacalao-primary text-white rounded text-lg">Abrir comprobante</button>
       {/if}
