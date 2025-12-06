@@ -45,7 +45,7 @@ function getInvoiceNumber(serie: string): Promise<number> {
 }
 
 function getCompleteInvoice(serie: string, invoiceNumber: string): Promise<Ticket> {
-  let query = "SELECT * FROM tickets WHERE serie = ? AND number = ?";
+  let query = "SELECT * FROM invoices WHERE serie = ? AND number = ?";
   return new Promise((resolve, reject) => {
     DB.get<{id: string, serie: string, number: number, date: string, client_id: number}>(query, [serie, invoiceNumber], (err, row) => {
       if(err) {

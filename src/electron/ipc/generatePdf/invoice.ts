@@ -4,13 +4,13 @@ import path from "path";
 import fs from 'fs'
 import PDFDocument from 'pdfkit'
 import { app } from "electron";
-import { Ticket } from "../../../types/models/ticket.js";
+import { Invoice } from "../../../types/models/invoice.js";
 
-export function generateTicketPDF(isTicket: boolean = true, ticket: Ticket): Promise<string>{
+export function generateInvoicePDF(isTicket: boolean = true, invoice: Invoice): Promise<string>{
   return new Promise((resolve, reject) => {
     try {
-      const pdfFolderPath = getPDFTicketFolder();
-      const pdfPath = path.join(pdfFolderPath, ticket.serie.toUpperCase() + "-" + ticket.number.toString().padStart(4, "0") + ".pdf");
+      const pdfFolderPath = getPDFInvoiceFolder();
+      const pdfPath = path.join(pdfFolderPath, invoice.serie.toUpperCase() + "-" + invoice.number.toString().padStart(4, "0") + ".pdf");
 
       const doc = new PDFDocument({size: "A4" ,margin: 40});
       const writeString = fs.createWriteStream(pdfPath);
@@ -65,8 +65,8 @@ export function generateTicketPDF(isTicket: boolean = true, ticket: Ticket): Pro
         .stroke("#000");
 
       doc.fontSize(9).font("Helvetica-Bold").text("R.U.C. N° 10769527058", rucBoxX, rucBoxY + 10, {width: rucBoxW, align: "center"});
-      doc.fontSize(14).text("BOLETA ELECTRÓNICA", rucBoxX, rucBoxY + 34, {width: rucBoxW, align: "center"});
-      doc.fontSize(13).text(ticket.serie.toUpperCase() + "-" + ticket.number.toString().padStart(4, "0"), rucBoxX + 2, rucBoxY + 80, {width: rucBoxW, align: "center"});
+      doc.fontSize(14).text("FACTURA ELECTRÓNICA", rucBoxX, rucBoxY + 34, {width: rucBoxW, align: "center"});
+      doc.fontSize(13).text(invoice.serie.toUpperCase() + "-" + invoice.number.toString().padStart(4, "0"), rucBoxX + 2, rucBoxY + 80, {width: rucBoxW, align: "center"});
 
       // ---------- Datos del cliente / Info factura ----------
       const detailsTop = 150;
@@ -83,21 +83,21 @@ export function generateTicketPDF(isTicket: boolean = true, ticket: Ticket): Pro
       doc
         .font("Helvetica")
         .fontSize(9)
-        .text(ticket.client.name ?? "-", detailsLeft + 70, detailsTop);
+        .text(invoice.client.name ?? "-", detailsLeft + 70, detailsTop);
 
       doc.font("Helvetica-Bold").fontSize(9).text("RUC:", detailsLeft, detailsTop + 14);
-      doc.font("Helvetica").fontSize(9).text(ticket.client.ruc ?? "-", detailsLeft + 70, detailsTop + 14);
+      doc.font("Helvetica").fontSize(9).text(invoice.client.ruc ?? "-", detailsLeft + 70, detailsTop + 14);
 
       doc.font("Helvetica-Bold").fontSize(9).text("DIRECCIÓN:", detailsLeft, detailsTop + 28);
-      doc.font("Helvetica").fontSize(9).text(ticket.client.address ?? "-", detailsLeft + 70, detailsTop + 28);
+      doc.font("Helvetica").fontSize(9).text(invoice.client.address ?? "-", detailsLeft + 70, detailsTop + 28);
 
       // Fecha y N° (right)
       const rightX = detailsLeft + colLeftW + 10;
       doc.font("Helvetica-Bold").fontSize(9).text("FECHA EMISIÓN:", rightX, detailsTop);
-      doc.font("Helvetica").fontSize(9).text(ticket.dateString, rightX + 90, detailsTop);
+      doc.font("Helvetica").fontSize(9).text(invoice.dateString, rightX + 90, detailsTop);
 
       doc.font("Helvetica-Bold").fontSize(9).text("N° FACTURA:", rightX, detailsTop + 14);
-      doc.font("Helvetica").fontSize(9).text(ticket.number.toString().padStart(4, "0"), rightX + 90, detailsTop + 14);
+      doc.font("Helvetica").fontSize(9).text(invoice.number.toString().padStart(4, "0"), rightX + 90, detailsTop + 14);
 
 
       // Tabla de productos
@@ -127,7 +127,7 @@ export function generateTicketPDF(isTicket: boolean = true, ticket: Ticket): Pro
       doc.text("V. UNIT.", tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + 4, tableTop + 5, { width: colWidths.unit, align: "right" });
       doc.text("IMPORTE", tableLeft + colWidths.code + colWidths.desc + colWidths.cunit + colWidths.qty + colWidths.unit + 4, tableTop + 5, { width: colWidths.amount, align: "right" });
 
-      let elements = ticket.productsList;
+      let elements = invoice.productsList;
 
       // Draw rows
       let y = tableTop + 25;

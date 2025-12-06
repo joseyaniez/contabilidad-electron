@@ -30,6 +30,7 @@ export interface IElectronAPI {
   }
   pdf: {
     generateTicket: (isTicket: boolean, ticket: Ticket) => Promise<{ok: boolean, data: string}>
+    generateInvoice: (isTicket: boolean, invoice: Invoice) => Promise<{ok: boolean, data: string}>
     openPdf: (pdfPath: string) => Promise<{ok: boolean, data: string}>
   }
 }

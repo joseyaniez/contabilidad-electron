@@ -1,13 +1,26 @@
 import { ipcMain, shell } from "electron"
 import path from "path";
+import { generateInvoicePDF } from "./generatePdf/invoice.js";
 import { generateTicketPDF } from "./generatePdf/ticket.js";
 import { Ticket } from "../../types/models/ticket.js";
+import { Invoice } from "../../types/models/invoice.js";
 
 export default function setupPdfIPC() {
 
   ipcMain.handle('pdf:createTicket', async (event, isTicket: boolean, ticket: Ticket): Promise<{ok: boolean, data: string}> => {
     try {
       var pdfPath = await generateTicketPDF(true, ticket);
+
+      return {ok: true, data: pdfPath};
+    } catch(err) {
+      console.log("Error al generar el PDF: " + err)
+      return {ok: false, data: ''}
+    }
+  })
+
+  ipcMain.handle('pdf:createInvoice', async (event, isTicket: boolean, invoice: Invoice): Promise<{ok: boolean, data: string}> => {
+    try {
+      var pdfPath = await generateInvoicePDF(true, invoice);
 
       return {ok: true, data: pdfPath};
     } catch(err) {

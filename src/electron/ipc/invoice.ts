@@ -2,14 +2,15 @@
 import { ipcMain } from "electron";
 import dbInvoice from '../db/models/invoice.js'
 import { Ticket } from "../../types/models/ticket.js";
+import { Invoice } from "../../types/models/invoice.js";
 
-export default function setupTicketsIPC(){
+export default function setupInvoicesIPC(){
 
   dbInvoice.createInvoiceTable();
 
-  ipcMain.handle("invoices:create", async (event, ticket: Ticket) => {
+  ipcMain.handle("invoices:create", async (event, invoice: Invoice) => {
     try {
-      const id = await dbInvoice.saveInvoice(ticket.serie, ticket.number, ticket.dateString, ticket.client.id!, ticket.productsList);
+      const id = await dbInvoice.saveInvoice(invoice.serie, invoice.number, invoice.dateString, invoice.client.id!, invoice.productsList);
       return { success: true, data: id };
     } catch(err){
       if (err instanceof Error) {
@@ -31,7 +32,7 @@ export default function setupTicketsIPC(){
     }
   })
 
-  ipcMain.handle("tickets:getNumber", async (event, serie: string) => {
+  ipcMain.handle("invoices:getNumber", async (event, serie: string) => {
     try {
       const num = await dbInvoice.getInvoiceNumber(serie);
       return { success: true, data: num }

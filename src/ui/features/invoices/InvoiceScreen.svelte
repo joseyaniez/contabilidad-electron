@@ -87,8 +87,8 @@
         await delay(3000);
         const idTicket = await window.electronAPI.invoices.create(invoice)
         invoiceStatus = PaymentStatus.GeneratingPDF;
-        const newTicket = await window.electronAPI.tickets.get(actualSerieInvoice, invoiceNumber.toString());
-        var {ok, data} = await window.electronAPI.pdf.generateTicket(true, { ...newTicket, dateString: new Date().toLocaleString()});
+        const newInvoice = await window.electronAPI.invoices.get(actualSerieInvoice, invoiceNumber.toString());
+        var {ok, data} = await window.electronAPI.pdf.generateInvoice(true, { ...newInvoice, dateString: new Date().toLocaleString()});
         invoiceNumber+=1;
         urlPdf = data;
         if(ok){
@@ -112,9 +112,11 @@
   <div class="flex flex-row items-center justify-between mb-4">
     <Title>
       <div class="flex flex-row gap-2">
-        <p>Boleta </p>
+        <p>Factura </p>
         {#if invoiceNumber > 0}
           <p class="text-md">{invoiceSerie}</p>
+        {:else}
+          <p class="text-md">{actualSerieInvoice + "-0000"}</p>
         {/if}
       </div>
     </Title>

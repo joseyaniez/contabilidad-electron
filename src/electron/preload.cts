@@ -58,11 +58,19 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
       } else {
         return ''
       }
+    },
+    getNumber: async (serie: string) => {
+      return await electron.ipcRenderer.invoke("invoices:getNumber", serie);
     }
   },
   pdf: {
     generateTicket: async(isTicket: boolean, ticket: Ticket) => {
       return await electron.ipcRenderer.invoke("pdf:createTicket", isTicket, ticket);
+    },
+    generateInvoice: async (isTicket: boolean, invoice: Invoice) => {
+      console.log(invoice.serie)
+      console.log(JSON.stringify(invoice.serie))
+      return await electron.ipcRenderer.invoke("pdf:createInvoice", true, invoice);
     },
     openPdf: async (pdfPath: string) => {
       return await electron.ipcRenderer.invoke("pdf:open", pdfPath);
