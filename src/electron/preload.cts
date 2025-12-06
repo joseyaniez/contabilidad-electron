@@ -4,6 +4,8 @@ import type { Product } from '../types/models/product';
 import type { Client } from '../types/models/client';
 import { Invoice } from '../types/models/invoice';
 import { Ticket } from '../types/models/ticket';
+import cancellation from './db/models/cancellation';
+import { Cancellation } from '../types/models/cancellation';
 
 electron.contextBridge.exposeInMainWorld("electronAPI", {
   products: {
@@ -61,6 +63,11 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     },
     getNumber: async (serie: string) => {
       return await electron.ipcRenderer.invoke("invoices:getNumber", serie);
+    }
+  },
+  cancellation: {
+    create: async (cancellation: Cancellation) => {
+      return electron.ipcRenderer.invoke("cancellations:create", cancellation);
     }
   },
   pdf: {

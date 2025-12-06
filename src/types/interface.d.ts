@@ -3,6 +3,7 @@ import type { Client } from "./models/client"
 import type { Ticket } from "./models/ticket";
 import type { TicketItem } from "./models/ticketItem";
 import type { Invoice } from "./models/invoice";
+import type { Cancellation } from "./models/cancellation";
 
 export type resourceResponse<T> = {success: boolean; error?: string; data?: T};
 
@@ -27,7 +28,10 @@ export interface IElectronAPI {
     create: (invoice: Invoice) => Promise<number>,
     get: (serie: string, numberInvoice: string) => Promise<Invoice>,
     getNumber: (serie: string) => Promise<resourceResponse<number>>,
-  }
+  },
+  cancellations: {
+    create: (cancellation: Cancellation) => Promise<resourceResponse<number>>,
+  },
   pdf: {
     generateTicket: (isTicket: boolean, ticket: Ticket) => Promise<{ok: boolean, data: string}>
     generateInvoice: (isTicket: boolean, invoice: Invoice) => Promise<{ok: boolean, data: string}>

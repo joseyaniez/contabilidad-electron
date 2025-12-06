@@ -12,6 +12,7 @@ import setupTicketItemsIPC from './ipc/ticketItem.js';
 import setupPdfIPC from './ipc/pdf.js';
 import setupInvoicesIPC from './ipc/invoice.js';
 import setupInvoiceItemsIPC from './ipc/invoiceItem.js';
+import setupCancellationIPC from './ipc/cancellation.js';
 
 app.on("ready", () => {
   const mainwindow = new BrowserWindow({
@@ -33,5 +34,6 @@ app.on("ready", () => {
   setupInvoicesIPC();
   setupInvoiceItemsIPC();
   setupPdfIPC();
+  setupCancellationIPC();
 
 });
