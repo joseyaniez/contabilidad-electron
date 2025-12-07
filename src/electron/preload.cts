@@ -6,6 +6,7 @@ import { Invoice } from '../types/models/invoice';
 import { Ticket } from '../types/models/ticket';
 import cancellation from './db/models/cancellation';
 import { Cancellation } from '../types/models/cancellation';
+import { DateState } from '../types/util';
 
 electron.contextBridge.exposeInMainWorld("electronAPI", {
   products: {
@@ -43,6 +44,14 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
         return data;
       } else {
         return ''
+      }
+    },
+    getAll: async (dateState: DateState) => {
+      let { success, data } = await electron.ipcRenderer.invoke("tickets:getAll", dateState);
+      if(success){
+        return data;
+      } else {
+        return [];
       }
     },
     getNumber: async(serie: string) => {

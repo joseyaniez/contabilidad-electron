@@ -2,6 +2,7 @@
 import { ipcMain } from "electron";
 import dbTicket from '../db/models/ticket.js'
 import { Ticket } from "../../types/models/ticket.js";
+import { DateState } from "../../types/util.js";
 
 export default function setupTicketsIPC(){
 
@@ -24,6 +25,18 @@ export default function setupTicketsIPC(){
       const ticket = await dbTicket.getCompleteTicket(serie, ticketNumber);
       return { success: true, data: ticket }
     } catch(err){
+      if(err instanceof Error){
+          return { success: false, error: err.message };
+      }
+      return { success: false, error: "Unknown error" };
+    }
+  })
+
+  ipcMain.handle("tickets:getAll", async (event, dateState: DateState) => {
+    try {
+      const tickets = await dbTicket.getCompleteTickets(dateState);
+      return { success: true, data: tickets }
+    } catch(err) {
       if(err instanceof Error){
           return { success: false, error: err.message };
       }

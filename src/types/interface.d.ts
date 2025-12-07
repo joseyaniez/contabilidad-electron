@@ -4,6 +4,7 @@ import type { Ticket } from "./models/ticket";
 import type { TicketItem } from "./models/ticketItem";
 import type { Invoice } from "./models/invoice";
 import type { Cancellation } from "./models/cancellation";
+import type { DateState } from "./util";
 
 export type resourceResponse<T> = {success: boolean; error?: string; data?: T};
 
@@ -22,6 +23,7 @@ export interface IElectronAPI {
   tickets: {
     create: (ticket: Ticket) => Promise<number>,
     get: (serie: string, numberTicket: string) => Promise<Ticket>,
+    getAll: (dateState: DateState) => Promise<Array<Tickets>>,
     getNumber: (serie: string) => Promise<resourceResponse<number>>,
   },
   invoices: {

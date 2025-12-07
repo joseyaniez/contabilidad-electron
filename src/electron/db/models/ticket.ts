@@ -1,6 +1,7 @@
 
 import { Client } from "../../../types/models/client.js";
-import { Ticket } from "../../../types/models/ticket.js";
+import type { DateState } from "../../../types/util.js";
+import { Ticket, GetTicketsResponse } from "../../../types/models/ticket.js";
 import { TicketItem } from "../../../types/models/ticketItem.js";
 import { DB } from "../connection.js";
 
@@ -42,6 +43,99 @@ function getTicketNumber(serie: string): Promise<number> {
       const number = row.num;
       resolve(number+1)
     })
+  })
+}
+
+function getCompleteTickets(dateState: DateState): Promise<Array<Ticket>> {
+  let initialDate = '';
+  const d = new Date();
+  switch(dateState){
+    case 'day':
+      d.setDate(d.getDate() - 1)
+      initialDate = d.toISOString();
+    case "week":
+      d.setDate(d.getDate() - 7)
+      initialDate = d.toISOString();
+    case "month":
+      d.setMonth(d.getMonth() - 1);
+      initialDate = d.toISOString();
+    case "year":
+      d.setFullYear(d.getFullYear() - 1);
+      initialDate = d.toISOString();
+    case "full":
+      d.setFullYear(d.getFullYear() - 10);
+      initialDate = d.toISOString();
+  }
+  let query = `
+    SELECT 
+      t.id AS ticketId,
+      t.serie AS ticketSerie,
+      t.date AS ticketDate,
+      t.number AS ticketNumber,
+
+      c.id AS clientId,
+      c.name AS clientName,
+      c.dni AS clientDni,
+      c.ruc AS clientRuc,
+      c.address AS clientAddress,
+
+      ti.id AS item_id,
+      ti.description AS itemDescription,
+      ti.unit AS itemUnit
+      ti.quantity AS itemQuantity,
+      ti.unit_price AS itemUnitPrice
+      ti.import_price AS itemImportPrice
+
+    FROM tickets t
+    LEFT JOIN clients c ON c.id = t.client_id
+    LEFT JOIN ticket_items ti ON ti.ticket_id = t.id
+    WHERE t.date BETWEEN ? AND ?
+    ORDER BY t.date ASC
+  `
+  return new Promise((resolve, reject) => {
+    DB.all<GetTicketsResponse>(query, [initialDate, d], (err, rows) => {
+      if(err){
+        console.log("Error al obtener todos los tickets: " + err)
+        reject(err);
+        return
+      }
+
+      let tickets: Array<Ticket> = [];
+      let map: Map<string, Ticket> = new Map();
+
+      for(const row of rows){
+        if(!map.get(row.ticketId)){
+          map.set(row.ticketId, {
+            id: row.ticketId,
+            dateString: row.ticketDate,
+            serie: row.ticketSerie,
+            number: row.ticketNumber,
+            client: {
+              id: row.clientId,
+              name: row.clientName,
+              dni: row.clientDni ?? '',
+              ruc: row.clientRuc ?? '',
+              address: row.clientAddress,
+            },
+            productsList: []
+          });
+          tickets.push(map.get(row.ticketId)!);
+        }
+
+        if(row.itemId){
+          map.get(row.ticketId)?.productsList.push({
+            id: row.itemId,
+            description: row.itemDescription,
+            unit: row.itemUnit,
+            unitPrice: row.itemUnitPrice,
+            importPrice: row.itemImportPrice,
+            quantity: row.itemQuantity,
+            ticketId: row.ticketId
+          })
+        }
+      }
+      resolve(tickets);
+    });
   })
 }
 
@@ -154,4 +248,4 @@ function saveTicket(serie: string, number: number, dateString: string, clientId:
   });
 }
 
-export default {createTicketTable, saveTicket, getCompleteTicket, getTicketNumber}
+export default {createTicketTable, saveTicket, getCompleteTicket, getCompleteTickets, getTicketNumber}
