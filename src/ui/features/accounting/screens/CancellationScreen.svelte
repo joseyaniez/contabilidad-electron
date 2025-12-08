@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import type { DateState } from "../../../../types/util";
   import type { Ticket } from "../../../../types/models/ticket";
+  import type { Invoice } from "../../../../types/models/invoice";
   import InputSelect from "../../../components/form/InputSelect.svelte";
   import Title from "../../../components/Title.svelte";
   import CancellationTable from "../components/CancellationTable.svelte";
@@ -19,19 +19,27 @@
     {value: 'full', name: "Desde siempre"},
   ]
 
-  let cancellationType = $state('B');
+  let cancellationType = $state<'B' | 'F' | 'none'>('B');
   let cancellationDate = $state<DateState>('week');
 
   let tickets = $state<Array<Ticket>>([]);
-  let invoices = $state([]);
+  let invoices = $state<Array<Invoice>>([]);
 
-
-  onMount(async () => {
-    if(cancellationType == 'B'){
-      let result = await window.electronAPI.tickets.getAll(cancellationDate);
-      tickets = result;
-      console.log(result);
+  $effect(() => {
+    if(cancellationDate !== "none"){
+      (async () => {
+        if(cancellationType == 'B'){
+          const result = await window.electronAPI.tickets.getAll(cancellationDate)
+          invoices = [];
+          tickets = result;
+        } else if (cancellationType == 'F'){
+          const result = await window.electronAPI.invoices.getAll(cancellationDate);
+          tickets = [];
+          invoices = result;
+        }
+      })();
     }
+
   })
 
 </script>
@@ -42,5 +50,5 @@
     <InputSelect title="Tipo" content={typeValues} bind:value={cancellationType}/>
     <InputSelect title="Fecha" content={dateValues} bind:value={cancellationDate}/>
   </div>
-    <CancellationTable items={[]}/>
+    <CancellationTable type={cancellationType} itemsB={tickets} itemsF={invoices}/>
 </div>

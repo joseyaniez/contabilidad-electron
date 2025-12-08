@@ -2,6 +2,8 @@ import { Client } from "../../../types/models/client.js";
 import { Ticket } from "../../../types/models/ticket.js";
 import { InvoiceItem } from "../../../types/models/invoiceItem.js"
 import { DB } from "../connection.js";
+import { DateState } from "../../../types/util.js";
+import { GetInvoicesResponse, Invoice } from "../../../types/models/invoice.js";
 
 function createInvoiceTable(){
   let sql = `
@@ -41,6 +43,109 @@ function getInvoiceNumber(serie: string): Promise<number> {
       const number = row.num;
       resolve(number+1)
     })
+  })
+}
+
+function getCompleteInvoices(dateState: DateState): Promise<Array<Invoice>> {
+  console.log("llamando a getCompleteInvoices")
+  let initialDate = '';
+  const actualDate = new Date();
+  const d = new Date();
+  switch(dateState){
+    case 'day':
+      d.setDate(d.getDate() - 1)
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+      break;
+    case "week":
+      d.setDate(d.getDate() - 7)
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+      break;
+    case "month":
+      d.setMonth(d.getMonth() - 1);
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+      break;
+    case "year":
+      d.setFullYear(d.getFullYear() - 1);
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+      break;
+    case "full":
+      d.setFullYear(d.getFullYear() - 10);
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+      break;
+    default:
+      d.setFullYear(d.getFullYear() - 10);
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+  }
+  let query = `
+    SELECT 
+      i.id AS invoiceId,
+      i.serie AS invoiceSerie,
+      i.date AS invoiceDate,
+      i.number AS invoiceNumber,
+
+      c.id AS clientId,
+      c.name AS clientName,
+      c.dni AS clientDni,
+      c.ruc AS clientRuc,
+      c.address AS clientAddress,
+
+      it.id AS itemId,
+      it.description AS itemDescription,
+      it.unit AS itemUnit,
+      it.quantity AS itemQuantity,
+      it.unit_price AS itemUnitPrice,
+      it.import_price AS itemImportPrice
+
+    FROM invoices i
+    LEFT JOIN clients c ON c.id = i.client_id
+    LEFT JOIN invoice_items it ON it.invoice_id = i.id
+    WHERE i.date BETWEEN ? AND ?
+    ORDER BY i.date ASC
+  `
+  return new Promise((resolve, reject) => {
+    DB.all<GetInvoicesResponse>(query, [initialDate, actualDate.toISOString().replace('T', ' ').replace('Z', '')], (err, rows) => {
+      if(err){
+        console.log("Error al obtener todos los tickets: " + err)
+        reject(err);
+        return
+      }
+
+      let invoices: Array<Ticket> = [];
+      let map: Map<string, Ticket> = new Map();
+
+      for(const row of rows){
+        if(!map.get(row.invoiceId)){
+          map.set(row.invoiceId, {
+            id: row.invoiceId,
+            dateString: row.invoiceDate,
+            serie: row.invoiceSerie,
+            number: row.invoiceNumber,
+            client: {
+              id: row.clientId,
+              name: row.clientName,
+              dni: row.clientDni ?? '',
+              ruc: row.clientRuc ?? '',
+              address: row.clientAddress,
+            },
+            productsList: []
+          });
+          invoices.push(map.get(row.invoiceId)!);
+        }
+
+        if(row.itemId){
+          map.get(row.invoiceId)?.productsList.push({
+            id: row.itemId,
+            description: row.itemDescription,
+            unit: row.itemUnit,
+            unitPrice: row.itemUnitPrice,
+            importPrice: row.itemImportPrice,
+            quantity: row.itemQuantity,
+            ticketId: row.invoiceId
+          })
+        }
+      }
+      resolve(invoices);
+    });
   })
 }
 
@@ -153,4 +258,4 @@ function saveInvoice(serie: string, number: number, dateString: string, clientId
   });
 }
 
-export default {createInvoiceTable, saveInvoice, getCompleteInvoice, getInvoiceNumber}
+export default {createInvoiceTable, saveInvoice, getCompleteInvoice, getCompleteInvoices, getInvoiceNumber}

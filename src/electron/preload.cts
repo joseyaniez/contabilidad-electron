@@ -70,6 +70,14 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
         return ''
       }
     },
+    getAll: async (dateState: DateState) => {
+      let { success, data } = await electron.ipcRenderer.invoke("invoices:getAll", dateState);
+      if(success){
+        return data;
+      } else {
+        return [];
+      }
+    },
     getNumber: async (serie: string) => {
       return await electron.ipcRenderer.invoke("invoices:getNumber", serie);
     }

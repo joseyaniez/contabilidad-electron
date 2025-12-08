@@ -131,7 +131,6 @@ function getCompleteTickets(dateState: DateState): Promise<Array<Ticket>> {
           tickets.push(map.get(row.ticketId)!);
         }
 
-          console.log(row.itemId);
         if(row.itemId){
           map.get(row.ticketId)?.productsList.push({
             id: row.itemId,

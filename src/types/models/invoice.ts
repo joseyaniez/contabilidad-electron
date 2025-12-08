@@ -9,3 +9,23 @@ export interface Invoice {
   client: Client,
   productsList: Array<InvoiceItem>
 }
+
+export interface GetInvoicesResponse {
+  invoiceId: string,
+  invoiceSerie: string,
+  invoiceDate: string,
+  invoiceNumber: number,
+  clientId: string,
+  clientName?: string,
+  clientDni?: string,
+  clientRuc?: string,
+  clientAddress?: string
+  itemId: string,
+  itemDescription: string,
+  itemUnit: string,
+  itemQuantity: number,
+  itemUnitPrice: number
+  itemImportPrice: number
+}
+
+

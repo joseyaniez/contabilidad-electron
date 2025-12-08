@@ -29,6 +29,7 @@ export interface IElectronAPI {
   invoices: {
     create: (invoice: Invoice) => Promise<number>,
     get: (serie: string, numberInvoice: string) => Promise<Invoice>,
+    getAll: (dateState: DateState) => Promise<Array<Invoice>>,
     getNumber: (serie: string) => Promise<resourceResponse<number>>,
   },
   cancellations: {

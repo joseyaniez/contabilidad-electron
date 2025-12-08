@@ -3,6 +3,7 @@ import { ipcMain } from "electron";
 import dbInvoice from '../db/models/invoice.js'
 import { Ticket } from "../../types/models/ticket.js";
 import { Invoice } from "../../types/models/invoice.js";
+import { DateState } from "../../types/util.js";
 
 export default function setupInvoicesIPC(){
 
@@ -24,6 +25,18 @@ export default function setupInvoicesIPC(){
     try {
       const invoice = await dbInvoice.getCompleteInvoice(serie, invoiceNumber);
       return { success: true, data: invoice }
+    } catch(err){
+      if(err instanceof Error){
+          return { success: false, error: err.message };
+      }
+      return { success: false, error: "Unknown error" };
+    }
+  })
+
+  ipcMain.handle("invoices:getAll", async (event, dateState: DateState) => {
+    try {
+      const invoices = await dbInvoice.getCompleteInvoices(dateState);
+      return { success: true, data: invoices }
     } catch(err){
       if(err instanceof Error){
           return { success: false, error: err.message };
