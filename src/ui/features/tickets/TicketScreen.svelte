@@ -47,7 +47,7 @@
         console.log("No es activo")
         return;
       }
-      const day = new Date().toISOString();
+      const day = new Date().toISOString().replace('T', ' ').replace('Z', '');
       const client = { ...clientSelected! };
       const ticket:Ticket = {
         serie: actualSerieTicket,

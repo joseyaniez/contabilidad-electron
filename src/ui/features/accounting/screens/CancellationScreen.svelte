@@ -1,7 +1,10 @@
-<script>
+<script lang="ts">
+  import { onMount } from "svelte";
+  import type { DateState } from "../../../../types/util";
+  import type { Ticket } from "../../../../types/models/ticket";
   import InputSelect from "../../../components/form/InputSelect.svelte";
   import Title from "../../../components/Title.svelte";
-    import CancellationTable from "../components/CancellationTable.svelte";
+  import CancellationTable from "../components/CancellationTable.svelte";
 
   let typeValues = [
     {value: 'B', name: "Boleta"},
@@ -16,15 +19,21 @@
     {value: 'full', name: "Desde siempre"},
   ]
 
-  let cancellationType = $state('B')
-  let cancellationDate = $state('week')
+  let cancellationType = $state('B');
+  let cancellationDate = $state<DateState>('week');
+
+  let tickets = $state<Array<Ticket>>([]);
+  let invoices = $state([]);
 
 
-  $effect(async () => {
+  onMount(async () => {
     if(cancellationType == 'B'){
-      window.electronAPI.tickets.get()
+      let result = await window.electronAPI.tickets.getAll(cancellationDate);
+      tickets = result;
+      console.log(result);
     }
   })
+
 </script>
 
 <div class="lg:w-5/6 lg:m-auto relative h-full">

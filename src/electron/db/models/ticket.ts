@@ -48,23 +48,32 @@ function getTicketNumber(serie: string): Promise<number> {
 
 function getCompleteTickets(dateState: DateState): Promise<Array<Ticket>> {
   let initialDate = '';
+  const actualDate = new Date();
   const d = new Date();
   switch(dateState){
     case 'day':
       d.setDate(d.getDate() - 1)
-      initialDate = d.toISOString();
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+      break;
     case "week":
       d.setDate(d.getDate() - 7)
-      initialDate = d.toISOString();
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+      break;
     case "month":
       d.setMonth(d.getMonth() - 1);
-      initialDate = d.toISOString();
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+      break;
     case "year":
       d.setFullYear(d.getFullYear() - 1);
-      initialDate = d.toISOString();
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+      break;
     case "full":
       d.setFullYear(d.getFullYear() - 10);
-      initialDate = d.toISOString();
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
+      break;
+    default:
+      d.setFullYear(d.getFullYear() - 10);
+      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
   }
   let query = `
     SELECT 
@@ -79,21 +88,21 @@ function getCompleteTickets(dateState: DateState): Promise<Array<Ticket>> {
       c.ruc AS clientRuc,
       c.address AS clientAddress,
 
-      ti.id AS item_id,
-      ti.description AS itemDescription,
-      ti.unit AS itemUnit
-      ti.quantity AS itemQuantity,
-      ti.unit_price AS itemUnitPrice
-      ti.import_price AS itemImportPrice
+      i.id AS itemId,
+      i.description AS itemDescription,
+      i.unit AS itemUnit,
+      i.quantity AS itemQuantity,
+      i.unit_price AS itemUnitPrice,
+      i.import_price AS itemImportPrice
 
     FROM tickets t
     LEFT JOIN clients c ON c.id = t.client_id
-    LEFT JOIN ticket_items ti ON ti.ticket_id = t.id
+    LEFT JOIN ticket_items i ON i.ticket_id = t.id
     WHERE t.date BETWEEN ? AND ?
     ORDER BY t.date ASC
   `
   return new Promise((resolve, reject) => {
-    DB.all<GetTicketsResponse>(query, [initialDate, d], (err, rows) => {
+    DB.all<GetTicketsResponse>(query, [initialDate, actualDate.toISOString().replace('T', ' ').replace('Z', '')], (err, rows) => {
       if(err){
         console.log("Error al obtener todos los tickets: " + err)
         reject(err);
@@ -122,6 +131,7 @@ function getCompleteTickets(dateState: DateState): Promise<Array<Ticket>> {
           tickets.push(map.get(row.ticketId)!);
         }
 
+          console.log(row.itemId);
         if(row.itemId){
           map.get(row.ticketId)?.productsList.push({
             id: row.itemId,
