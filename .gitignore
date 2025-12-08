@@ -27,4 +27,4 @@ dist-electron
 
 pdfs/*
 
-.mydata.db
+mydata.db
