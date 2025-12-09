@@ -1,10 +1,10 @@
 
 <script lang="ts">
-    import type { Invoice } from "../../../../types/models/invoice";
-  import type { Ticket } from "../../../../types/models/ticket";
+  import type { Invoice } from "../../../../types/models/invoice";
+    import type { Ticket } from "../../../../types/models/ticket";
   import { sumPrices } from "../../../util/cents";
 
-  let { item, ticketSelected = $bindable(), invoiceSelected = $bindable() }: {item: Ticket, ticketSelected: Ticket | null, invoiceSelected: Invoice | null} = $props();
+  let { item, ticketSelected = $bindable(), invoiceSelected = $bindable() }: {item: Invoice, ticketSelected: Ticket | null, invoiceSelected: Invoice | null} = $props();
 
   let isHidden = $state(true);
 
@@ -13,8 +13,8 @@
   }
 
   function cancellationClick(){
-    invoiceSelected = null;
-    ticketSelected = item;
+    ticketSelected = null;
+    invoiceSelected = item;
   }
 
 </script>

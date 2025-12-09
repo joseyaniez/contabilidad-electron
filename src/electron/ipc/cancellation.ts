@@ -6,9 +6,10 @@ import { Cancellation } from "../../types/models/cancellation.js";
 export default function setupCancellationIPC(){
   dbCancellation.createCancellationTable();
 
-  ipcMain.handle("cancellation:create", async (event, cancellation: Cancellation) => {
+  ipcMain.handle("cancellations:create", async (event, cancellation: Cancellation) => {
     try {
       const id = await dbCancellation.saveCancellation(cancellation.cause, cancellation.cancellableType, cancellation.cancellableId);
+      return { success: true, data: id }
     } catch (err){
       if (err instanceof Error) {
         return { success: false, error: err.message };

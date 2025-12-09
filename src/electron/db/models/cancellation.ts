@@ -22,7 +22,7 @@ function createCancellationTable() {
 function saveCancellation(cause: string, type: 'B' | 'F', id: string): Promise<number>{
   let query = `
     INSERT INTO cancellations(cause, cancellableType, cancellableId)
-    VALLUES (?,?,?)
+    VALUES (?,?,?)
   `;
   return new Promise((resolve, reject) => {
     DB.run(query, [cause, type, id], function (err) {

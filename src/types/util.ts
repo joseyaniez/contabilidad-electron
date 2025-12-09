@@ -1,2 +1,2 @@
 
-export type DateState = 'day' | 'week' | 'month' | 'year' | 'full' | 'none'
+export type DateState = 'day' | 'yesterday' | 'before-yesterday' | 'full' | 'none'

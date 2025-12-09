@@ -13,14 +13,13 @@
 
   let dateValues = [
     {value: 'day', name: "Hoy"},
-    {value: 'week', name: "Esta semana"},
-    {value: 'month', name: "Este mes"},
-    {value: 'year', name: "Este año"},
-    {value: 'full', name: "Desde siempre"},
+    {value: 'yesterday', name: "Ayer"},
+    {value: 'before-yesterday', name: "Anteayer"},
+    {value: 'full', name: "Última semana"},
   ]
 
   let cancellationType = $state<'B' | 'F' | 'none'>('B');
-  let cancellationDate = $state<DateState>('week');
+  let cancellationDate = $state<DateState>('day');
 
   let tickets = $state<Array<Ticket>>([]);
   let invoices = $state<Array<Invoice>>([]);

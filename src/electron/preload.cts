@@ -82,7 +82,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
       return await electron.ipcRenderer.invoke("invoices:getNumber", serie);
     }
   },
-  cancellation: {
+  cancellations: {
     create: async (cancellation: Cancellation) => {
       return electron.ipcRenderer.invoke("cancellations:create", cancellation);
     }

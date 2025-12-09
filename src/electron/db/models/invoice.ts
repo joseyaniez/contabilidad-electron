@@ -56,24 +56,22 @@ function getCompleteInvoices(dateState: DateState): Promise<Array<Invoice>> {
       d.setDate(d.getDate() - 1)
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
       break;
-    case "week":
-      d.setDate(d.getDate() - 7)
+    case "yesterday":
+      actualDate.setDate(actualDate.getDay() - 1)
+      d.setDate(d.getDate() - 2)
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
       break;
-    case "month":
-      d.setMonth(d.getMonth() - 1);
-      initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
-      break;
-    case "year":
-      d.setFullYear(d.getFullYear() - 1);
+    case "before-yesterday":
+      actualDate.setDate(actualDate.getDay() - 2)
+      d.setMonth(d.getMonth() - 3);
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
       break;
     case "full":
-      d.setFullYear(d.getFullYear() - 10);
+      d.setFullYear(d.getFullYear() - 7);
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
       break;
     default:
-      d.setFullYear(d.getFullYear() - 10);
+      d.setFullYear(d.getFullYear() - 7);
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
   }
   let query = `
@@ -97,9 +95,10 @@ function getCompleteInvoices(dateState: DateState): Promise<Array<Invoice>> {
       it.import_price AS itemImportPrice
 
     FROM invoices i
+    LEFT JOIN cancellations j ON j.cancellableId = i.id AND j.cancellableType = 'F'
     LEFT JOIN clients c ON c.id = i.client_id
     LEFT JOIN invoice_items it ON it.invoice_id = i.id
-    WHERE i.date BETWEEN ? AND ?
+    WHERE j.cancellableId IS NULL AND i.date BETWEEN ? AND ?
     ORDER BY i.date ASC
   `
   return new Promise((resolve, reject) => {
