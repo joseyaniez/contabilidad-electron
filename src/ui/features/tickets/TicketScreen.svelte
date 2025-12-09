@@ -49,6 +49,7 @@
       }
       const day = new Date().toISOString().replace('T', ' ').replace('Z', '');
       const client = { ...clientSelected! };
+      console.log({...clientSelected});
       const ticket:Ticket = {
         serie: actualSerieTicket,
         number: ticketNumber,

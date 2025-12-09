@@ -91,7 +91,7 @@ function getCompleteTickets(dateState: DateState): Promise<Array<Ticket>> {
       i.unit AS itemUnit,
       i.quantity AS itemQuantity,
       i.unit_price AS itemUnitPrice,
-      i.import_price AS itemImportPrice,
+      i.import_price AS itemImportPrice
       
     FROM tickets t
     LEFT JOIN cancellations j ON j.cancellableId = t.id AND j.cancellableType = 'B'
@@ -102,7 +102,6 @@ function getCompleteTickets(dateState: DateState): Promise<Array<Ticket>> {
   `
   return new Promise((resolve, reject) => {
     DB.all<GetTicketsResponse>(query, [initialDate, actualDate.toISOString().replace('T', ' ').replace('Z', '')], (err, rows) => {
-      console.log(rows)
       if(err){
         console.log("Error al obtener todos los tickets: " + err)
         reject(err);

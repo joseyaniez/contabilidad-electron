@@ -31,7 +31,7 @@
       const result = await window.electronAPI.products.find(productText);
       const data = result.data || [];
       if(result.success){
-        productList = data;
+        productList = productText.length == 0 ? [] : data;
       } else {
         console.error("Failed to fetch clients:", result.error);
       }

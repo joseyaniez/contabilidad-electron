@@ -47,7 +47,6 @@ function getInvoiceNumber(serie: string): Promise<number> {
 }
 
 function getCompleteInvoices(dateState: DateState): Promise<Array<Invoice>> {
-  console.log("llamando a getCompleteInvoices")
   let initialDate = '';
   const actualDate = new Date();
   const d = new Date();
