@@ -26,5 +26,6 @@ dist-electron
 *.sw?
 
 pdfs/*
+icons/*
 
 mydata.db
