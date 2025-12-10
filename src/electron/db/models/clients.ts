@@ -38,7 +38,7 @@ function saveClient(dni: string, ruc: string, address: string, name: string): Pr
   });
 }
 
-function findClients(dni: string, ruc: string, name: string): Promise<Array<Client>> {
+function findClients(dni: string, ruc: string, name: string, filteredRuc: boolean = false): Promise<Array<Client>> {
   if(dni === "" && ruc === "" && name === "") {
     console.log("No search parameters provided");
     return Promise.resolve([]);
@@ -55,8 +55,15 @@ function findClients(dni: string, ruc: string, name: string): Promise<Array<Clie
       OR UPPER(name) LIKE ?
   `;
 
+  const filteredSql = `
+    SELECT * FROM clients
+    WHERE (UPPER(dni) LIKE ?
+      OR UPPER(ruc) LIKE ?
+      OR UPPER(name) LIKE ?) AND (ruc != "")
+  `;
+
   return new Promise((resolve, reject) => {
-    DB.all<Client>(sql, [dniSearch, rucSearch, nameSearch], (err, rows) => {
+    DB.all<Client>(filteredRuc ? filteredSql : sql, [dniSearch, rucSearch, nameSearch], (err, rows) => {
       if (err) {
         reject(err);
         return;

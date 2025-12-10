@@ -18,19 +18,21 @@ export interface IElectronAPI {
   },
   clients: {
     create: (client: Client) => Promise<resourceResponse<Client>>,
-    find: (dni: string, ruc: string, name: string) => Promise<resourceResponse<Array<Client>>>,
+    find: (dni: string, ruc: string, name: string, filteredRuc: boolean) => Promise<resourceResponse<Array<Client>>>,
   },
   tickets: {
     create: (ticket: Ticket) => Promise<number>,
     get: (serie: string, numberTicket: string) => Promise<Ticket>,
     getAll: (dateState: DateState) => Promise<Array<Tickets>>,
     getNumber: (serie: string) => Promise<resourceResponse<number>>,
+    getBetween: (initialDate: string, finalDate: string) => Promise<resourceResponse<Array<Ticket>>>,
   },
   invoices: {
     create: (invoice: Invoice) => Promise<number>,
     get: (serie: string, numberInvoice: string) => Promise<Invoice>,
     getAll: (dateState: DateState) => Promise<Array<Invoice>>,
     getNumber: (serie: string) => Promise<resourceResponse<number>>,
+    getBetween: (initialDate: string, finalDate: string) => Promise<resourceResponse<Array<Invoice>>>,
   },
   cancellations: {
     create: (cancellation: Cancellation) => Promise<resourceResponse<number>>,

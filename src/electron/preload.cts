@@ -30,8 +30,8 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     create: async (client: Client) => {
       return await electron.ipcRenderer.invoke("clients:create", client);
     },
-    find: async (dni: string, ruc: string, name: string) => {
-      return await electron.ipcRenderer.invoke("clients:find", dni, ruc, name);
+    find: async (dni: string, ruc: string, name: string, filteredRuc: boolean = false) => {
+      return await electron.ipcRenderer.invoke("clients:find", dni, ruc, name, filteredRuc);
     }
   },
   tickets: {
@@ -56,6 +56,9 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     },
     getNumber: async(serie: string) => {
       return await electron.ipcRenderer.invoke("tickets:getNumber", serie);
+    },
+    getBetween: async (initialDate: string, finalDate: string) => {
+      return await electron.ipcRenderer.invoke("tickets:getBetween", initialDate, finalDate);
     }
   },
   invoices: {
@@ -80,6 +83,9 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     },
     getNumber: async (serie: string) => {
       return await electron.ipcRenderer.invoke("invoices:getNumber", serie);
+    },
+    getBetween: async (initialDate: string, finalDate: string) => {
+      return await electron.ipcRenderer.invoke("invoices:getBetween", initialDate, finalDate);
     }
   },
   cancellations: {

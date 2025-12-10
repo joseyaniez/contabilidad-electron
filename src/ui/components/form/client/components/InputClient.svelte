@@ -2,7 +2,7 @@
   import type { Client } from "../../../../../types/models/client";
   import { debounceAsync } from "../../../../util/debounceAsync";
 
-  let { clientSelected = $bindable() } = $props();
+  let { clientSelected = $bindable(), filteredRuc = false } = $props();
 
   const updateDebounced = debounceAsync(updateClientsList, 600);
 
@@ -28,7 +28,7 @@
   
   async function updateClientsList(){
     try {
-      const result = await window.electronAPI.clients.find(clientText, clientText, clientText);
+      const result = await window.electronAPI.clients.find(clientText, clientText, clientText, filteredRuc);
       const data = result.data || [];
       if(result.success){
         clientList = data;

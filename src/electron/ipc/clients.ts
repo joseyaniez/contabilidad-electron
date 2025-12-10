@@ -19,9 +19,9 @@ export default function setupClientsIPC(){
     }
   });
 
-  ipcMain.handle("clients:find", async (event, dni: string, ruc: string, name: string) => {
+  ipcMain.handle("clients:find", async (event, dni: string, ruc: string, name: string, filteredRuc: boolean = false) => {
     try {
-      const clients = await dbClient.findClients(dni, ruc, name);
+      const clients = await dbClient.findClients(dni, ruc, name, filteredRuc);
       return { success: true, data: clients };
     } catch (error) {
       if (error instanceof Error) {

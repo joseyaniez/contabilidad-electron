@@ -33,6 +33,18 @@ export default function setupInvoicesIPC(){
     }
   })
 
+  ipcMain.handle("invoices:getBetween", async (event, initialDate: string, finalDate: string) => {
+    try {
+      const invoices = await dbInvoice.getInvoicesBetween(initialDate, finalDate);
+      return { success: true, data: invoices }
+    } catch(err){
+      if(err instanceof Error){
+          return { success: false, error: err.message };
+      }
+      return { success: false, error: "Unknown error" };
+    }
+  })
+
   ipcMain.handle("invoices:getAll", async (event, dateState: DateState) => {
     try {
       const invoices = await dbInvoice.getCompleteInvoices(dateState);

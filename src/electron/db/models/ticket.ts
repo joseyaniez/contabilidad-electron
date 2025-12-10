@@ -46,6 +46,81 @@ function getTicketNumber(serie: string): Promise<number> {
   })
 }
 
+function getTicketsBetween(initialDate: string, finalDate: string): Promise<Array<Ticket>> {
+  let query = `
+    SELECT 
+      t.id AS ticketId,
+      t.serie AS ticketSerie,
+      t.date AS ticketDate,
+      t.number AS ticketNumber,
+
+      c.id AS clientId,
+      c.name AS clientName,
+      c.dni AS clientDni,
+      c.ruc AS clientRuc,
+      c.address AS clientAddress,
+
+      i.id AS itemId,
+      i.description AS itemDescription,
+      i.unit AS itemUnit,
+      i.quantity AS itemQuantity,
+      i.unit_price AS itemUnitPrice,
+      i.import_price AS itemImportPrice
+      
+    FROM tickets t
+    LEFT JOIN clients c ON c.id = t.client_id
+    LEFT JOIN ticket_items i ON i.ticket_id = t.id
+    WHERE t.date BETWEEN ? AND ? 
+    ORDER BY t.date ASC
+  `
+  return new Promise((resolve, reject) => {
+    console.log(initialDate, finalDate)
+    DB.all<GetTicketsResponse>(query, [initialDate, finalDate], (err, rows) => {
+      if(err){
+        console.log("Error al obtener todos los tickets: " + err)
+        reject(err);
+        return
+      }
+
+      let tickets: Array<Ticket> = [];
+      let map: Map<string, Ticket> = new Map();
+
+      for(const row of rows){
+        if(!map.get(row.ticketId)){
+          map.set(row.ticketId, {
+            id: row.ticketId,
+            dateString: row.ticketDate,
+            serie: row.ticketSerie,
+            number: row.ticketNumber,
+            client: {
+              id: row.clientId,
+              name: row.clientName,
+              dni: row.clientDni ?? '',
+              ruc: row.clientRuc ?? '',
+              address: row.clientAddress,
+            },
+            productsList: []
+          });
+          tickets.push(map.get(row.ticketId)!);
+        }
+
+        if(row.itemId){
+          map.get(row.ticketId)?.productsList.push({
+            id: row.itemId,
+            description: row.itemDescription,
+            unit: row.itemUnit,
+            unitPrice: row.itemUnitPrice,
+            importPrice: row.itemImportPrice,
+            quantity: row.itemQuantity,
+            ticketId: row.ticketId
+          })
+        }
+      }
+      resolve(tickets);
+    });
+  })
+}
+
 function getCompleteTickets(dateState: DateState): Promise<Array<Ticket>> {
   let initialDate = '';
   const actualDate = new Date();
@@ -256,4 +331,4 @@ function saveTicket(serie: string, number: number, dateString: string, clientId:
   });
 }
 
-export default {createTicketTable, saveTicket, getCompleteTicket, getCompleteTickets, getTicketNumber}
+export default {createTicketTable, saveTicket, getCompleteTicket, getCompleteTickets, getTicketNumber, getTicketsBetween}

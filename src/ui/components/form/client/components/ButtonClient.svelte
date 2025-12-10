@@ -3,6 +3,7 @@
     import Modal from "../../../Modal.svelte";
     import Title from "../../../Title.svelte";
     import InputText from "../../InputText.svelte";
+    import InputTextArea from "../../InputTextArea.svelte";
 
     let { clientSelected = $bindable() } = $props();
     let showModal = $state(false);
@@ -61,11 +62,10 @@
       <div class="mb-4">
         <InputText title="Nombre" bind:value={client.name} />
       </div>
-      {#if client.ruc.length > 0}
-        <div>
-          <InputText title="Dirección" bind:value={client.address} />
-        </div>
-      {/if}
+      <div>
+        <InputTextArea title="Dirección" bind:value={client.address} />
+        <p class="text-sm text-red-500">RUC requiere una dirección</p>
+      </div>
       <div class="flex justify-end mt-2">
         <Button onclick={ onSaveClient }>Guardar</Button>
       </div>

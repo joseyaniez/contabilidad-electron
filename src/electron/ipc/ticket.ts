@@ -32,6 +32,18 @@ export default function setupTicketsIPC(){
     }
   })
 
+  ipcMain.handle("tickets:getBetween", async (event, initialDate: string, finalDate: string) => {
+    try {
+      const tickets = await dbTicket.getTicketsBetween(initialDate, finalDate);
+      return { success: true, data: tickets }
+    } catch(err) {
+      if(err instanceof Error){
+          return { success: false, error: err.message };
+      }
+      return { success: false, error: "Unknown error" };
+    }
+  })
+
   ipcMain.handle("tickets:getAll", async (event, dateState: DateState) => {
     try {
       const tickets = await dbTicket.getCompleteTickets(dateState);

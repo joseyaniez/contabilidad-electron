@@ -18,7 +18,6 @@
     let clientSelected = $state<Client | null>(null);
     let productsSelected = $state<Array<Product & {quantity: number}>>([]);
     let total = $derived(sumPrices(...productsSelected.map(p => multiplyPrice(p.quantity, p.price))))
-    let isActiveButton = $derived(!clientSelected !== null && productsSelected.length != 0);
 
     let ticketStatus = $state<PaymentStatus>(PaymentStatus.Blank);
     let showModal = $state(false);
@@ -43,7 +42,7 @@
 
     async function onSaveClick(){
       ticketStatus = PaymentStatus.Blank;
-      if(!isActiveButton){
+      if(clientSelected == null || productsSelected.length == 0){
         console.log("No es activo")
         return;
       }

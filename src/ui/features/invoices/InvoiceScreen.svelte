@@ -19,7 +19,6 @@
     let clientSelected = $state<Client | null>(null);
     let productsSelected = $state<Array<Product & {quantity: number}>>([]);
     let total = $derived(sumPrices(...productsSelected.map(p => multiplyPrice(p.quantity, p.price))))
-    let isActiveButton = $derived(!clientSelected !== null && productsSelected.length != 0);
 
     let invoiceStatus = $state<PaymentStatus>(PaymentStatus.Blank);
     let showModal = $state(false);
@@ -50,7 +49,7 @@
 
     async function onSaveClick(){
       invoiceStatus = PaymentStatus.Blank;
-      if(!isActiveButton){
+      if(clientSelected == null || productsSelected.length == 0){
         console.log("No es activo")
         return;
       }
@@ -122,7 +121,8 @@
     </Title>
     <div class="text-bacalao-primary font-bold text-xl">{today}</div>
   </div>
-  <ClientForm bind:clientSelected/>
+  <p class="absolute left-18 text-gray-400">(Solo clientes con RUC)</p>
+  <ClientForm filteredRuc={true} bind:clientSelected/>
   <ProductForm bind:productsSelected/>
   <div class="h-30"></div>
   <div class="absolute bottom-0 right-0 w-full z-50 flex flex-row justify-end px-10">
