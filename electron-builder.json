@@ -2,11 +2,7 @@
   "appId": "com.joseito.electron-course",
   "files": ["dist-electron/electron", "dist-svelte"],
   "extraResources": [
-    {
-      "from": "pdfs/tickets/",
-      "to": "pdfs/invoices/",
-      "filter": ["**/*"]
-    }
+    
   ],
   "icon": "./desktopIcon.png",
   "mac": {
@@ -18,6 +14,6 @@
   },
   "win": {
     "icon": "icons/icon.ico",
-    "target": ["portable", "msi"]
+    "target": ["nsis"]
   }
 }
