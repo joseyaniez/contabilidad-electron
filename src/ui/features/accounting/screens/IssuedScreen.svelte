@@ -3,6 +3,7 @@
   import type { Ticket } from "../../../../types/models/ticket";
   import InputSelect from "../../../components/form/InputSelect.svelte";
   import Title from "../../../components/Title.svelte";
+    import IssuedStats from "../components/IssuedStats.svelte";
   import IssuedTable from "../components/IssuedTable.svelte";
 
   let typeValues = [
@@ -63,6 +64,7 @@
         <input bind:value={finalDate} class="border-2 border-bacalao-primary p-2 rounded-md" id="inDate" type="date">
       </div>
     </div>
+    <IssuedStats {tickets} {invoices}/>
     <IssuedTable {tickets} {invoices}/>
   </div>
 </div>
