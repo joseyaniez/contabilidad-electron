@@ -2,7 +2,10 @@
   "appId": "com.joseito.electron-course",
   "files": ["dist-electron/electron", "dist-svelte"],
   "extraResources": [
-    
+    {
+      "from": "icons/pdfIcons",
+      "to": "pdfIcons"
+    }
   ],
   "icon": "./desktopIcon.png",
   "mac": {

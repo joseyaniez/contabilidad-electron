@@ -58,6 +58,7 @@
     bind:value={clientText} 
     class={`${isSelected ? 'bg-green-100' : 'bg-white'} px-4 py-1 relative z-20 border-2 border-bacalao-secondary border-solid rounded-xl`}
     type="text" 
+    tabindex="0"
     id="client-input"
   />
   <button 

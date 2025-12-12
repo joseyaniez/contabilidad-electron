@@ -1,5 +1,5 @@
 
-import { getPDFInvoiceFolder, getPDFTicketFolder } from "../../util.js";
+import { getIconsFolder, getPDFInvoiceFolder, getPDFTicketFolder } from "../../util.js";
 import path from "path";
 import fs from 'fs'
 import PDFDocument from 'pdfkit'
@@ -21,8 +21,8 @@ export function generateInvoicePDF(isTicket: boolean = true, invoice: Invoice): 
       const contentWidth = pageWidth - margin * 2;
 
       // ---- Logo de la empresa
-      const logoPath = path.join(app.getAppPath(), "public/logo.png")
-      const qrPath = path.join(app.getAppPath(), "public/qrexample.png")
+      const logoPath = path.join(getIconsFolder(), "logo.png")
+      const qrPath = path.join(getIconsFolder(), "qrexample.png")
       const logoWidth = 100;
       try {
         if(fs.existsSync(logoPath)){

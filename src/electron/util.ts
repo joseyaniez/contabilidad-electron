@@ -17,3 +17,9 @@ export function getPDFInvoiceFolder(): string {
   fs.mkdirSync(base, { recursive: true });
   return base;
 }
+
+export function getIconsFolder(): string {
+  const base = path.join(process.resourcesPath, "pdfIcons");
+  fs.mkdirSync(base, { recursive: true });
+  return base;
+}
