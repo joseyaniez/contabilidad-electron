@@ -16,7 +16,6 @@
     '/issued': IssuedScreen,
     '/products': ProductScreen,
     '/users': UserScreen,
-    '/config': TicketScreen
   }
 </script>
 

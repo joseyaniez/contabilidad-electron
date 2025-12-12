@@ -38,9 +38,5 @@ const lastItems = [
     {#each firstItems as item}
       <NavbarItem {...item} />
     {/each}
-    <div class="flex-1"></div>
-    {#each lastItems as item}
-      <NavbarItem {...item} />
-    {/each}
   </ul>
 </div>
