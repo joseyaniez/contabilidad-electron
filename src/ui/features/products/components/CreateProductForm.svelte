@@ -11,7 +11,7 @@
       description: "",
       unit: "unidad",
       price: 0,
-      stock: false
+      stock: true
     });
 
     $effect(() => {
@@ -27,7 +27,7 @@
           description: "",
           unit: "unidad",
           price: 0,
-          stock: false
+          stock: true
         }
       }
     });
@@ -70,6 +70,7 @@
     }
 
     function onClickSave(){
+      if(product.description == "" || product.price == 0) return;
       if(isUpdate){
         updateProduct();
       } else {

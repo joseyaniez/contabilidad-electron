@@ -12,6 +12,7 @@
     import { delay } from "../../util/delay";
     import { obtainSendingText } from "../../util/sendingMessage";
     import { PaymentStatus } from "../../util/paymentStatus";
+    import TributationForm from "./components/TributationForm.svelte";
 
     const today = new Date().toLocaleDateString();
     const actualSerieInvoice = "F001";
@@ -24,6 +25,8 @@
     let showModal = $state(false);
     let invoiceNumber = $state(0);
     let urlPdf= $state("");
+    let tributeValue = $state("contado");
+    let months = $state(1);
     let invoiceSerie = $derived(actualSerieInvoice + "-" + invoiceNumber.toString().padStart(4, "0"))
 
     const pagagementTypes = [
@@ -122,8 +125,9 @@
     <div class="text-bacalao-primary font-bold text-xl">{today}</div>
   </div>
   <p class="absolute left-18 text-gray-400">(Solo clientes con RUC)</p>
-  <ClientForm filteredRuc={true} bind:clientSelected/>
+  <ClientForm filteredRuc={true} bind:clientSelected dniOnly={false}/>
   <ProductForm bind:productsSelected/>
+  <TributationForm bind:tributeValue bind:months />
   <div class="h-30"></div>
   <div class="absolute bottom-0 right-0 w-full z-50 flex flex-row justify-end px-10">
     <Button padding={2} onclick={onSaveClick}>Pagar</Button>
