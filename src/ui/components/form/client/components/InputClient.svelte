@@ -2,7 +2,7 @@
   import type { Client } from "../../../../../types/models/client";
   import { debounceAsync } from "../../../../util/debounceAsync";
 
-  let { clientSelected = $bindable(), filteredRuc = false } = $props();
+  let { clientSelected = $bindable(), filteredRuc = false, filteredDni = false } = $props();
 
   const updateDebounced = debounceAsync(updateClientsList, 600);
 
@@ -28,7 +28,7 @@
   
   async function updateClientsList(){
     try {
-      const result = await window.electronAPI.clients.find(clientText, clientText, clientText, filteredRuc);
+      const result = await window.electronAPI.clients.find(clientText, clientText, clientText, filteredRuc, filteredDni);
       const data = result.data || [];
       if(result.success){
         clientList = data;
@@ -70,7 +70,7 @@
   <div class={`absolute w-5/6 top-16 bg-white left-2 ${clientList.length > 0 && !isSelected ? 'block' : 'hidden'} shadow-lg rounded-xl z-30`}>
     <div class="p-2 border-x border-b rounded-b-xl border-bacalao-secondary flex flex-col">
       {#each clientList as client}
-        <button onclick={() => {onClickProductListed(client)}} class="px-2 py-1 text-left rounded-md hover:bg-indigo-50">{client.ruc ? client.dni + client.ruc : client.dni} - {client.name}</button>
+        <button onclick={() => {onClickProductListed(client)}} class="px-2 py-1 text-left rounded-md hover:bg-indigo-50">{client.ruc? client.ruc + " - " : ""} {client.dni ? client.dni + " - " : ""} {client.name}</button>
       {/each}
     </div>
   </div>

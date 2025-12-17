@@ -19,10 +19,34 @@ export default function setupClientsIPC(){
     }
   });
 
-  ipcMain.handle("clients:find", async (event, dni: string, ruc: string, name: string, filteredRuc: boolean = false) => {
+  ipcMain.handle("clients:getAll", async () => {
     try {
-      const clients = await dbClient.findClients(dni, ruc, name, filteredRuc);
+      const clients = await dbClient.getAllClients();
       return { success: true, data: clients };
+    } catch (error) {
+      if (error instanceof Error) {
+        return { success: false, error: error.message };
+      }
+      return { success: false, error: "Unknown error" };
+    }
+  })
+
+  ipcMain.handle("clients:find", async (event, dni: string, ruc: string, name: string, filteredRuc: boolean = false, filteredDni: boolean = false) => {
+    try {
+      const clients = await dbClient.findClients(dni, ruc, name, filteredRuc, filteredDni);
+      return { success: true, data: clients };
+    } catch (error) {
+      if (error instanceof Error) {
+        return { success: false, error: error.message };
+      }
+      return { success: false, error: "Unknown error" };
+    }
+  });
+
+  ipcMain.handle("clients:delete", async (event, id: string) => {
+    try {
+      const clients = await dbClient.deleteClient(id);
+      return { success: true, data: true };
     } catch (error) {
       if (error instanceof Error) {
         return { success: false, error: error.message };

@@ -42,7 +42,7 @@
 <div class="lg:w-5/6 lg:m-auto relative h-full">
   <Title>Productos</Title>
   <div class="flex items-center gap-2 my-4">
-    <div class="flex-1">Buscador...</div>
+    <div class="flex-1"></div>
     <div>
       <button 
         class="bg-bacalao-primary rounded-md px-2 py-1 text-white"

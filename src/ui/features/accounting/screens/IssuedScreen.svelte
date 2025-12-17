@@ -34,6 +34,7 @@
       let iDate = new Date(initialDate);
       let iDateSending = iDate.toISOString().replace('T', ' ').replace('Z', '')
       let fDate = new Date(finalDate);
+      fDate.setDate(fDate.getDate() + 1)
       let fDateSending = fDate.toISOString().replace('T', ' ').replace('Z', '')
       const {success, data} = await window.electronAPI.tickets.getBetween(iDateSending, fDateSending);
       if(success){
@@ -41,7 +42,12 @@
         invoices = [];
       }
     } else {
-      const {success, data} = await window.electronAPI.invoices.getBetween(initialDate, finalDate);
+      let iDate = new Date(initialDate);
+      let iDateSending = iDate.toISOString().replace('T', ' ').replace('Z', '')
+      let fDate = new Date(finalDate);
+      fDate.setDate(fDate.getDate() + 1)
+      let fDateSending = fDate.toISOString().replace('T', ' ').replace('Z', '')
+      const {success, data} = await window.electronAPI.invoices.getBetween(iDateSending, fDateSending);
       if(success){
         invoices = data!;
         tickets = [];

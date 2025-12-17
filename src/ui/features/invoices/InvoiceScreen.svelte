@@ -125,7 +125,7 @@
     <div class="text-bacalao-primary font-bold text-xl">{today}</div>
   </div>
   <p class="absolute left-18 text-gray-400">(Solo clientes con RUC)</p>
-  <ClientForm filteredRuc={true} bind:clientSelected dniOnly={false}/>
+  <ClientForm filteredRuc={true} filteredDni={false} bind:clientSelected dniOnly={false}/>
   <ProductForm bind:productsSelected/>
   <TributationForm bind:tributeValue bind:months />
   <div class="h-30"></div>

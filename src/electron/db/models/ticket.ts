@@ -71,7 +71,7 @@ function getTicketsBetween(initialDate: string, finalDate: string): Promise<Arra
     LEFT JOIN clients c ON c.id = t.client_id
     LEFT JOIN ticket_items i ON i.ticket_id = t.id
     WHERE t.date BETWEEN ? AND ? 
-    ORDER BY t.date ASC
+    ORDER BY t.date DESC
   `
   return new Promise((resolve, reject) => {
     console.log(initialDate, finalDate)
@@ -131,13 +131,13 @@ function getCompleteTickets(dateState: DateState): Promise<Array<Ticket>> {
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
       break;
     case "yesterday":
-      actualDate.setDate(actualDate.getDay() - 1)
+      actualDate.setDate(actualDate.getDate() - 1)
       d.setDate(d.getDate() - 2)
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
       break;
     case "before-yesterday":
-      actualDate.setDate(actualDate.getDay() - 2)
-      d.setMonth(d.getMonth() - 3);
+      actualDate.setDate(actualDate.getDate() - 2)
+      d.setDate(d.getDate() - 3);
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
       break;
     case "full":
@@ -173,7 +173,7 @@ function getCompleteTickets(dateState: DateState): Promise<Array<Ticket>> {
     LEFT JOIN clients c ON c.id = t.client_id
     LEFT JOIN ticket_items i ON i.ticket_id = t.id
     WHERE j.cancellableId IS NULL AND t.date BETWEEN ? AND ? 
-    ORDER BY t.date ASC
+    ORDER BY t.date DESC
   `
   return new Promise((resolve, reject) => {
     DB.all<GetTicketsResponse>(query, [initialDate, actualDate.toISOString().replace('T', ' ').replace('Z', '')], (err, rows) => {

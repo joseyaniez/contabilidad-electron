@@ -23,6 +23,10 @@ const firstItems = [
     title: 'Emitidos',
     routeName: 'issued'
   },
+  {
+    title: 'Clientes',
+    routeName: 'clients'
+  },
 ];
 
 const lastItems = [
@@ -34,7 +38,7 @@ const lastItems = [
 </script>
 
 <div class="m-2 bg-bacalao-primary text-white font-medium rounded-lg">
-  <ul class="flex items-center px-3">
+  <ul class="flex justify-center items-center px-3">
     {#each firstItems as item}
       <NavbarItem {...item} />
     {/each}

@@ -30,8 +30,14 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     create: async (client: Client) => {
       return await electron.ipcRenderer.invoke("clients:create", client);
     },
-    find: async (dni: string, ruc: string, name: string, filteredRuc: boolean = false) => {
-      return await electron.ipcRenderer.invoke("clients:find", dni, ruc, name, filteredRuc);
+    find: async (dni: string, ruc: string, name: string, filteredRuc: boolean = false, filteredDni: boolean = false) => {
+      return await electron.ipcRenderer.invoke("clients:find", dni, ruc, name, filteredRuc, filteredDni);
+    },
+    getAll: async () => {
+      return await electron.ipcRenderer.invoke("clients:getAll");
+    },
+    delete: async (id: string) => {
+      return await electron.ipcRenderer.invoke("clients:delete", id);
     }
   },
   tickets: {

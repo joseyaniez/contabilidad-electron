@@ -18,7 +18,9 @@ export interface IElectronAPI {
   },
   clients: {
     create: (client: Client) => Promise<resourceResponse<Client>>,
-    find: (dni: string, ruc: string, name: string, filteredRuc: boolean) => Promise<resourceResponse<Array<Client>>>,
+    find: (dni: string, ruc: string, name: string, filteredRuc: boolean, filteredDni: boolean) => Promise<resourceResponse<Array<Client>>>,
+    getAll: () => Promise<resourceResponse<Array<Client>>>,
+    delete: (id: string) => Promise<resourceResponse<boolean>>,
   },
   tickets: {
     create: (ticket: Ticket) => Promise<number>,

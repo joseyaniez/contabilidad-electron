@@ -71,7 +71,7 @@ function getInvoicesBetween(initialDate: string, finalDate: string): Promise<Arr
     LEFT JOIN clients c ON c.id = i.client_id
     LEFT JOIN invoice_items it ON it.invoice_id = i.id
     WHERE i.date BETWEEN ? AND ?
-    ORDER BY i.date ASC
+    ORDER BY i.date DESC
   `
   return new Promise((resolve, reject) => {
     DB.all<GetInvoicesResponse>(query, [initialDate, finalDate], (err, rows) => {
@@ -131,13 +131,13 @@ function getCompleteInvoices(dateState: DateState): Promise<Array<Invoice>> {
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
       break;
     case "yesterday":
-      actualDate.setDate(actualDate.getDay() - 1)
+      actualDate.setDate(actualDate.getDate() - 1)
       d.setDate(d.getDate() - 2)
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
       break;
     case "before-yesterday":
-      actualDate.setDate(actualDate.getDay() - 2)
-      d.setMonth(d.getMonth() - 3);
+      actualDate.setDate(actualDate.getDate() - 2)
+      d.setDate(d.getDate() - 3);
       initialDate = d.toISOString().replace('T', ' ').replace('Z', '');
       break;
     case "full":
@@ -173,7 +173,7 @@ function getCompleteInvoices(dateState: DateState): Promise<Array<Invoice>> {
     LEFT JOIN clients c ON c.id = i.client_id
     LEFT JOIN invoice_items it ON it.invoice_id = i.id
     WHERE j.cancellableId IS NULL AND i.date BETWEEN ? AND ?
-    ORDER BY i.date ASC
+    ORDER BY i.date DESC
   `
   return new Promise((resolve, reject) => {
     DB.all<GetInvoicesResponse>(query, [initialDate, actualDate.toISOString().replace('T', ' ').replace('Z', '')], (err, rows) => {

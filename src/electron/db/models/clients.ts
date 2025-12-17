@@ -38,7 +38,22 @@ function saveClient(dni: string, ruc: string, address: string, name: string): Pr
   });
 }
 
-function findClients(dni: string, ruc: string, name: string, filteredRuc: boolean = false): Promise<Array<Client>> {
+function getAllClients(): Promise<Array<Client>> {
+  const sql = `
+    SELECT * FROM clients
+  `;
+  return new Promise((resolve, reject) => {
+    DB.all<Client>(sql, [], (err, rows) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(rows);
+    });
+  });
+}
+
+function findClients(dni: string, ruc: string, name: string, filteredRuc: boolean = false, filteredDni: boolean = false): Promise<Array<Client>> {
   if(dni === "" && ruc === "" && name === "") {
     console.log("No search parameters provided");
     return Promise.resolve([]);
@@ -55,15 +70,31 @@ function findClients(dni: string, ruc: string, name: string, filteredRuc: boolea
       OR UPPER(name) LIKE ?
   `;
 
-  const filteredSql = `
+  const filteredSqlQuery = `
     SELECT * FROM clients
     WHERE (UPPER(dni) LIKE ?
       OR UPPER(ruc) LIKE ?
       OR UPPER(name) LIKE ?) AND (ruc != "")
   `;
 
+  const filteredDniQuery = `
+    SELECT * FROM clients
+    WHERE (UPPER(dni) LIKE ?
+      OR UPPER(ruc) LIKE ?
+      OR UPPER(name) LIKE ?) AND (dni != "")
+  `;
+
   return new Promise((resolve, reject) => {
-    DB.all<Client>(filteredRuc ? filteredSql : sql, [dniSearch, rucSearch, nameSearch], (err, rows) => {
+    let query;
+    if(filteredRuc){
+      query = filteredSqlQuery;
+    } else if(filteredDni) {
+      query = filteredDniQuery;
+    } else {
+      query = sql;
+    }
+
+    DB.all<Client>(query, [dniSearch, rucSearch, nameSearch], (err, rows) => {
       if (err) {
         reject(err);
         return;
@@ -73,4 +104,25 @@ function findClients(dni: string, ruc: string, name: string, filteredRuc: boolea
   });
 }
 
-export default { createClientsTable, saveClient, findClients };
+function deleteClient(id: string): Promise<boolean> {
+
+  console.log(id)
+
+  const query = `
+    DELETE FROM clients
+    WHERE id = ?
+  `;
+
+  return new Promise((resolve, reject) => {
+
+    DB.run(query, [id], (err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(true);
+    });
+  });
+}
+
+export default { createClientsTable, saveClient, findClients, getAllClients, deleteClient };

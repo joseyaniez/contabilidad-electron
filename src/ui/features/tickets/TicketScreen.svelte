@@ -113,7 +113,8 @@
     </Title>
     <div class="text-bacalao-primary font-bold text-xl">{today}</div>
   </div>
-  <ClientForm bind:clientSelected/>
+  <p class="absolute left-18 text-gray-400">(Solo clientes con DNI)</p>
+  <ClientForm bind:clientSelected filteredDni={true} filteredRuc={false} dniOnly={true}/>
   <ProductForm bind:productsSelected/>
   <div class="h-30"></div>
   <div class="absolute bottom-0 right-0 w-full z-50 flex flex-row justify-end px-10">

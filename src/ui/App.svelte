@@ -3,7 +3,7 @@
   import Router from "svelte-spa-router";
   import TicketScreen from "./features/tickets/TicketScreen.svelte";
   import InvoiceScreen from "./features/invoices/InvoiceScreen.svelte";
-  import UserScreen from "./features/users/UserScreen.svelte";
+  import ClientsScreen from "./features/clients/ClientsScreen.svelte";
   import ProductScreen from "./features/products/ProductScreen.svelte";
   import CancellationScreen from "./features/accounting/screens/CancellationScreen.svelte";
   import IssuedScreen from "./features/accounting/screens/IssuedScreen.svelte";
@@ -15,7 +15,7 @@
     '/cancellation': CancellationScreen,
     '/issued': IssuedScreen,
     '/products': ProductScreen,
-    '/users': UserScreen,
+    '/clients': ClientsScreen,
   }
 </script>
 
